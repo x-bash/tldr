@@ -6,6 +6,8 @@
 
 xrc param/v0
 
+______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+
 tldr(){
     param:dsl <<A
 subcommands:
@@ -117,7 +119,14 @@ ___tldr_cat(){
 
     case $num in
         0)  printf "Not found.\n" >&2; return 1 ;;
-        1)  cat "$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages/$cand" ;;
+        1)
+            if [ -t 1 ]; then
+                echo hi
+                awk -f "$______X_CMD_TLDR_AWK" <"$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages/$cand"
+            else
+                cat "$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages/$cand"
+            fi
+                ;;
         *)  printf "Found %s:\n %s\n" "$num" "$cand"; >&2 return 1 ;;
     esac
 }
