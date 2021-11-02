@@ -75,7 +75,7 @@ ___tldr_update()(
     fi
 
     if cd "$_______X_CMD_TLDR_ROOT/$version/pages" && tar xvf pages.tgz 2>/dev/null; then
-        printf "Already upload version to %s.\n" "$version" >&2
+        printf "Version already UPDATED to %s.\n" "$version" >&2
     fi
 
 )
