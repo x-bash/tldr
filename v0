@@ -121,7 +121,6 @@ ___tldr_cat(){
         0)  printf "Not found.\n" >&2; return 1 ;;
         1)
             if [ -t 1 ]; then
-                echo hi
                 awk -f "$______X_CMD_TLDR_AWK" <"$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages/$cand"
             else
                 cat "$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages/$cand"
