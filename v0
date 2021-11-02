@@ -42,13 +42,17 @@ tldr(){
 subcommands:
     update      "Update"
     ls          "list all possible commands"
-    lang        "Prefered language"
+    use         "Prefered language"
     cat         "cat"
 A
     param:run
 
     if [ -z "${PARAM_SUBCMD}" ]; then
-        tldr cat "$@"
+        case "$1" in
+            -*)     tldr cat "${1#-}" ;;
+            :*)     tldr cat "${1#:}" ;;
+            *)      tldr cat "$@" ;;
+        esac
         return
     fi
 
