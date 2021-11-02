@@ -133,7 +133,7 @@ ___tldr_ls_lang(){
     printf "%s" "$______X_CMD_TLDR_LANG"
 }
 
-______X_CMD_TLDR_LANG=en
+______X_CMD_TLDR_LANG_PREFERED="${______X_CMD_TLDR_LANG_PREFERED:-en}"
 ___tldr_use(){
     local lang="${1:?Provide langauge}"
     if [ "$lang" != "en" ]; then
@@ -141,14 +141,14 @@ ___tldr_use(){
         version="$(___tldr_current_or_update)" || return
         _______tldr_download_pages "$version" "pages.$lang" || return
     fi
-    ______X_CMD_TLDR_LANG="$lang"
+    ______X_CMD_TLDR_LANG_PREFERED="$lang"
 }
 
 ___tldr_getfile(){
     local cand="${1:?Provide command}"
-    if [ "$______X_CMD_TLDR_LANG" != en ]; then
+    if [ "$______X_CMD_TLDR_LANG_PREFERED" != en ]; then
         local fp
-        fp="$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages.$______X_CMD_TLDR_LANG/$cand"
+        fp="$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
         [ -f "$fp" ] && printf "%s" "$fp" && return
     fi
 
