@@ -83,7 +83,7 @@ ___tldr_current(){
     printf "%s" "$version"
 }
 
-_______tldr_download_pages(){
+_______tldr_download_pages()(
     local version="${1:?Provide version}"
     local page_lang="${2:?pages}"
     if [ -d "$_______X_CMD_TLDR_ROOT/$version/$page_lang" ]; then
@@ -100,7 +100,7 @@ _______tldr_download_pages(){
     if cd "$_______X_CMD_TLDR_ROOT/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
         printf "Version already UPDATED to %s.\n" "$version" >&2
     fi
-}
+)
 
 ___tldr_update()(
     if ! ___X_CMD_CURL_UPDATE=1 _______tldr_download index.yml; then
@@ -146,9 +146,9 @@ ___tldr_use(){
 
 ___tldr_getfile(){
     local cand="${1:?Provide command}"
-
     if [ "$______X_CMD_TLDR_LANG" != en ]; then
-        local fp="$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages.$______X_CMD_TLDR_LANG/$cand"
+        local fp
+        fp="$_______X_CMD_TLDR_ROOT/$(___tldr_current)/pages.$______X_CMD_TLDR_LANG/$cand"
         [ -f "$fp" ] && printf "%s" "$fp" && return
     fi
 
@@ -163,22 +163,39 @@ ___tldr_ls()(
     local version
     version="$(___tldr_current_or_update)" || return
 
-    cd "$_______X_CMD_TLDR_ROOT/$version/pages/"
-    local cmd="${1}"
-    case "$cmd" in
-        "")     ls */* ;;
-        */*)    ls */* | grep "$cmd" ;;
-        *)      ls */* | grep "\/$cmd" ;;
-    esac
+    if cd "$_______X_CMD_TLDR_ROOT/$version/pages/"; then
+        local cmd="${1}"
+        case "$cmd" in
+            "")     ls */* ;;
+            */*)    ls */* | grep "$cmd" ;;
+            *)      ls */* | grep "\/$cmd" ;;
+        esac
+    fi
+)
+
+___tldr_exact()(
+    local version
+    version="$(___tldr_current_or_update)" || return
+
+    if cd "$_______X_CMD_TLDR_ROOT/$version/pages/"; then
+        local cmd="${1}"
+        case "$cmd" in
+            "")     ls */* ;;
+            */*)    ls */* | grep "$cmd" ;;
+            *)      ls */* | grep "\/$cmd.md" ;;
+        esac
+    fi
 )
 
 ___tldr_cat(){
-    cand="$( ___tldr_ls "$@" )"
+    cand="$( ___tldr_exact "$@" )"
     local num
     num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
 
     case $num in
-        0)  printf "Not found.\n" >&2; return 1 ;;
+        0)  printf "Not found.\n" >&2;
+            ___tldr_ls "$@" >&2
+            return 1 ;;
         1)
             if [ -t 1 ]; then
                 awk -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
