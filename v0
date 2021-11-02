@@ -107,8 +107,8 @@ ___tldr_ls()(
     local cmd="${1}"
     case "$cmd" in
         "")     ls */* ;;
-        */*)    ls */* | grep "$cmd.md" ;;
-        *)      ls */* | grep "\/$cmd.md" ;;
+        */*)    ls */* | grep "$cmd" ;;
+        *)      ls */* | grep "\/$cmd" ;;
     esac
 )
 
