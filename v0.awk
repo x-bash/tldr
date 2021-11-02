@@ -15,11 +15,11 @@
 
 function handle_title(title){
     # print "title:   " title
-    printf("\033[7;33m%s: \033[0m", title)
+    printf("\033[1;32;40m%s: \033[0;40m", title)
 }
 
 function handle_desc(desc){
-    printf("\033[7;32m%s\033[0m\n\n", desc)
+    printf("\033[1;32;40m%s\n\n\033[0;40m", desc)
 
 }
 
@@ -27,15 +27,16 @@ function handle_cmd(cmd, desc){
     # printf("\033[1;34m- %s\033[0m\n", desc)
     # printf("      \033[1;33m%s\033[0m\n", cmd)
 
-    printf("\033[1;33m%s\033[0m\n", cmd)
+    printf("\033[1;33;40m%s\n\033[0;40m", cmd)
     gsub(/:[ ]*$/, "", desc)
-    printf("    \033[1;36m%s\033[0m\n\n", desc)
+    printf("    \033[1;36;40m%s\n\033[0;40m\n\033[0m", desc)
 }
 
 
 # EndSection
 
 BEGIN {
+    printf("\033[0;40m%s", "")
     DESC_HANDLED = 0
 }
 
@@ -69,4 +70,8 @@ BEGIN {
             handle_cmd(cmd_text, cmd_info)
         }
     }
+}
+
+END {
+    printf("\033[0m\n")
 }
