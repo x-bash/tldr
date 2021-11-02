@@ -14,13 +14,12 @@
 # Section: visualize
 
 function handle_title(title){
-    # print "title:   " title
+    printf("\033[1;33;40m%s", "\n")
     printf("\033[1;32;40m%s: \033[0;40m", title)
 }
 
 function handle_desc(desc){
-    printf("\033[1;32;40m%s\n\n\033[0;40m", desc)
-
+    printf("\033[1;33;40m%s\n\n\033[0;40m", desc)
 }
 
 function handle_cmd(cmd, desc){
