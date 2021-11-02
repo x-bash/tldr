@@ -1,0 +1,168 @@
+# shellcheck shell=bash disable=SC2039,3043
+
+# author:       Li Junhao           l@x-cmd.com    edwinjhlee.github.io
+
+# Section: work
+
+xrc param/v0
+
+tldr(){
+    param:dsl <<A
+subcommands:
+    update      "Update"
+    ls          "list all possible commands"
+    lang        "Prefered language"
+    cat         "cat"
+    which       "locate the doc"
+A
+    param:run
+}
+
+_______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
+
+_______tldr_download(){
+    local src="${1:?src}"
+    local dst="${2:-$1}"
+
+    local CACHE="$_______X_CMD_TLDR_ROOT/$dst"
+
+    local url="https://gitee.com/x-cmd/tldr/raw/main/dist/$src"
+    if [ "$___X_CMD_IN_CHINA_NET" != 1 ]; then
+        url="https://raw.githubusercontent.com/x-cmd/tldr/main/dist/$src"
+    fi
+
+    ___x_cmd_curl "$url" 2>/dev/null
+}
+
+___tldr_current(){
+    if [ ! -f "$_______X_CMD_TLDR_ROOT/index.yml" ]; then
+        return 1
+    fi
+
+    local version="$(cat "$_______X_CMD_TLDR_ROOT/index.yml")"
+    version="${version%%
+*}"
+    version="${version#* }"
+    printf "%s" "$version"
+}
+
+___tldr_update()(
+    if ! ___X_CMD_CURL_UPDATE=1 _______tldr_download index.yml; then
+        printf "%s\n" "Fail to update index.yml." >&2
+        return 1
+    fi
+
+    local version="$(___tldr_current)"
+    version="${version%%
+*}"
+    version="${version#* }"
+
+    if [ -d "$_______X_CMD_TLDR_ROOT/$version/pages" ]; then
+        printf "pages already exists.\n" >&2
+        return
+    fi
+
+    mkdir -p "$_______X_CMD_TLDR_ROOT/$version/pages"
+    if ! _______tldr_download "$version/pages.tgz" "$version/pages/pages.tgz"; then
+        printf "%s\n" "Fail to update pages." >&2
+        return 1
+    fi
+
+    if cd "$_______X_CMD_TLDR_ROOT/$version/pages" && tar xvf pages.tgz 2>/dev/null; then
+        printf "Already upload version to %s.\n" "$version"
+    fi
+
+)
+
+___tldr_use(){
+    :
+}
+
+___tldr_ls(){
+    :
+}
+
+___tldr_look(){
+    :
+}
+
+# EndSection
+
+
+# Section: man
+
+___advise_man_exists(){
+    [ -d "$___X_CMD_ROOT/.tmp/advise/src" ]
+}
+
+___advise_man_update(){
+    local ___X_CMD_CURL_UPDATE="${___X_CMD_CURL_UPDATE}"
+
+    local CACHE="$___X_CMD_ROOT/.tmp/tldr/all.tar.gz"
+    local srcfolder="$___X_CMD_ROOT/.tmp/tldr/src"
+
+    local url="https://gitee.com/x-cmd/advise/raw/main/dist/all.tgz"
+    if [ "$___X_CMD_IN_CHINA_NET" != 1 ]; then
+        url="https://raw.githubusercontent.com/x-cmd/theme/advise/dist/all.tgz"
+    fi
+
+    if ___x_cmd_curl "$url"; then
+        [ -d "$srcfolder" ] && rm -rf "$srcfolder"
+        mkdir -p "$srcfolder"
+        tar -C "$srcfolder" xvf "$CACHE"
+    fi
+}
+
+___advise_man_ls(){
+    if ___advise_man_exists || ___advise_man_update; then
+        ls "$___X_CMD_ROOT/.tmp/advise/src"
+    fi
+}
+
+___advise_man_which(){
+    local name="${1:?Provide name}"
+    if ___advise_man_exists || ___advise_man_update; then
+        local p="$___X_CMD_ROOT/.tmp/advise/src/$name/advise.json"
+        [ -f "$p" ] && printf "%s" "$p"
+    fi
+
+    return 1
+}
+
+# ___advise_man_load(){
+#     local cmd="${1:?Provide cmd}"
+#     local p="$(___advise_man_which "$cmd")"
+#     if [ ! -f "$p" ]; then
+#         printf "%s\n" "$cmd.json Not found. You could try 'advise man update' for updates." >&2
+#         return 1
+#     fi
+#     compgen "___advise_man_completer" "$cmd"
+# }
+
+___advise_man_load(){
+    local i
+    for i in $(___advise_man_ls); do
+        if s=$(complete -p "$i" 1>/dev/null 2>&1); then
+            [[ "$s" == *___advise_completer* ]] && continue
+        fi
+        compgen "___advise_man_completer" "$i"
+    done
+}
+
+___advise_man_completer() {
+    # Interesting ... Passing
+    ___ADVISE_RUN_CMD_FOLDER="$___X_CMD_ROOT/.tmp/advise/src/" ___advise_run ""
+}
+
+___advise_man(){
+    local op="${1:?Provide subcommand}"; shift
+    case "$op" in
+        ls)         ___advise_man_ls ;;
+        update)     ___advise_man_update ;;
+        which)      ___advise_man_which "$@" ;;
+        load)       ___advise_man_load "$@" ;;
+        *)          ___advise_man_load "$op" "$@" ;;
+    esac
+}
+
+# EndSection
