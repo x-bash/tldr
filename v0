@@ -13,9 +13,15 @@ subcommands:
     ls          "list all possible commands"
     lang        "Prefered language"
     cat         "cat"
-    which       "locate the doc"
 A
     param:run
+
+    if [ -z "${PARAM_SUBCMD}" ]; then
+        tldr cat "$@"
+        return
+    fi
+
+    "___tldr_$PARAM_SUBCMD" "$@"
 }
 
 _______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
@@ -104,7 +110,7 @@ ___tldr_ls()(
     esac
 )
 
-___tldr_look(){
+___tldr_cat(){
     cand="$( ___tldr_ls "$@" )"
     local num
     num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
