@@ -1,0 +1,9 @@
+# shellcheck shell=bash
+cat java.md | awk -f "./v0_test.awk"
+test(){
+    local fp="$@"
+    cat "$fp" | awk -f "./v0_test.awk"
+}
+. ./v0
+______X_CMD_TLDR_AWK="./v0.awk"
+tldr cat java

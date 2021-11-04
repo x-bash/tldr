@@ -12,10 +12,14 @@
 # }
 
 # Section: visualize
+function debug(msg){
+    print "\033[1;31m" msg "\033[0;0m" > "/dev/stderr"
+}
 
 function handle_title(title){
-    printf("\033[1;33;40m%s", "\n")
+    printf("\033[1;33;40m%s\033[0;40m", "\n")
     printf("\033[1;32;40m%s: \033[0;40m", title)
+    # printf("\033[1;32;40m%s: \033[0;40m", "\n \n"title)
 }
 
 function handle_desc(desc){
@@ -23,9 +27,6 @@ function handle_desc(desc){
 }
 
 function handle_cmd(cmd, desc){
-    # printf("\033[1;34m- %s\033[0m\n", desc)
-    # printf("      \033[1;33m%s\033[0m\n", cmd)
-
     printf("\033[1;33;40m \n%s\n\033[0;40m", cmd)
     gsub(/:[ ]*$/, "", desc)
     while(match(desc, /`[^`]+`/)){
@@ -40,12 +41,13 @@ function handle_cmd(cmd, desc){
 BEGIN {
     printf("\033[0;40m%s", "")
     DESC_HANDLED = 0
+    test=""
 }
 
 {
     if ($0 ~ /^[ \t\r]*$/){
 
-    } else if ($1~/^#/)
+    }else if ($1~/^#/)
     {
         title = $0
         gsub(/^#[ ]*/, "", title)
