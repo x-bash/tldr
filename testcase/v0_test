@@ -5,5 +5,4 @@ test(){
     cat "$fp" | awk -f "./v0.awk"
 }
 . ./v0
-______X_CMD_TLDR_AWK="./v0.awk"
 # tldr cat ldapsearch

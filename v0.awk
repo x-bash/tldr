@@ -32,7 +32,7 @@ function cut_info_line(_info,_space_len,_info_len,_info_arr_len,_info_line){
 function handle_title(title){
     printf("\033[0;40m%s\033[1;40m", get_space(COLUMNS))
     printf("\033[1;33;40m%s\033[0;40m", "")
-    printf("\033[1;35;40m%s: \033[0;40m", title)
+    printf("\033[1;32;40m%s: \033[0;40m", title)
     title_len=length(title)+2
 }
 
