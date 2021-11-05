@@ -38,6 +38,15 @@ zh
 zh_TW
 "
 
+___tldr_init_lines_columns(){
+    if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
+        local IFS
+        read -r LINES COLUMNS <<A
+$(stty size)
+A
+    fi
+}
+
 tldr(){
     param:dsl <<A
 subcommands:
@@ -205,11 +214,11 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                # awk -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
+                # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
                 if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
-                    awk -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
                 else
-                    awk -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
                 fi
             else
                 cat "$(___tldr_getfile "$cand")"
