@@ -32,7 +32,7 @@ function cut_info_line(_info,_space_len,_info_len,_info_arr_len,_info_line){
 }
 
 function handle_title(title){
-    printf("\033[0;40m%s \033[0;40m", get_space(COLUMNS-1))
+    printf("\033[0;40m%s \n\033[0;40m", get_space(COLUMNS-1))
     printf("\033[1;33;40m%s\033[0;40m", "")
     printf("\033[1;32;40m%s: \033[0;40m", title)
     title_len=length(title)+2
@@ -50,8 +50,7 @@ function handle_cmd(cmd, info){
     printf ( "%s\n", sprintf("%" COLUMNS-length(cmd) "s", ""))
     gsub(/:[ ]*$/, "", info)
     printf("    \033[1;36;40m%s\033[0;40m", info)
-    printf ( "%s\n", sprintf("%" COLUMNS-length(info)-4+back_quote_len "s", ""))
-    back_quote_len=0
+    printf ( "%s\n", sprintf("%" COLUMNS-length(info)-4 "s", ""))
 }
 
 # EndSection
@@ -59,7 +58,6 @@ function handle_cmd(cmd, info){
 BEGIN {
     printf("\033[0;40m%s", "")
     title_len=0
-    back_quote_len=0
 }
 
 {
@@ -88,6 +86,5 @@ BEGIN {
 }
 
 END {
-    # handle_cmd2(cmd)
     printf("\033[0;40m%s%s\033[0m\n", get_space(COLUMNS-1)," ")
 }

@@ -7,6 +7,8 @@
 xrc param/v0
 
 ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+______X_CMD_TLDR_AWK_LONG="./v0_long.awk"
+______X_CMD_TLDR_AWK_SHORT="./v0_short.awk"
 
 ______X_CMD_TLDR_LANG="
 en
@@ -36,6 +38,15 @@ tr
 zh
 zh_TW
 "
+
+___tldr_init_lines_columns(){
+    if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
+        local IFS
+        read -r LINES COLUMNS <<A
+$(stty size)
+A
+    fi
+}
 
 tldr(){
     param:dsl <<A
@@ -194,6 +205,7 @@ ___tldr_exact()(
 )
 
 ___tldr_cat(){
+    ___tldr_init_lines_columns
     cand="$( ___tldr_exact "$@" )"
     local num
     num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
@@ -204,7 +216,13 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                awk -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
+                echo "$COLUMNS"
+                if [ "$COLUMNS" -ge  160 ]; then
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_LONG" <"$(___tldr_getfile "$cand")"
+                else
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_SHORT" <"$(___tldr_getfile "$cand")"
+                fi
+                # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
             else
                 cat "$(___tldr_getfile "$cand")"
             fi
