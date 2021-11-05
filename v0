@@ -213,12 +213,6 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                # echo "$COLUMNS"
-                # if [ "$COLUMNS" -ge  160 ]; then
-                #     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_LONG" <"$(___tldr_getfile "$cand")"
-                # else
-                #     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_SHORT" <"$(___tldr_getfile "$cand")"
-                # fi
                 awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
             else
                 cat "$(___tldr_getfile "$cand")"
