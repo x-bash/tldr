@@ -6,7 +6,8 @@
 
 xrc param/v0
 
-______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+# ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+______X_CMD_TLDR_AWK="./v0.awk"
 
 ______X_CMD_TLDR_LANG="
 en

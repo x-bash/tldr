@@ -15,7 +15,7 @@
 
 function handle_title(title){
     printf("\033[1;33;40m%s", "\n")
-    printf("\033[1;32;40m%s: \033[0;40m", title)
+    printf("\033[1;35;40m%s: \033[0;40m", title)
 }
 
 function handle_desc(desc){
