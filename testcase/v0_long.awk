@@ -23,15 +23,14 @@ function cut_info_line(_info,_space_len,_info_len,_info_arr_len,_info_line){
                 break
             }
         }
-        _info_line = _info_line substr(_info,1,_info_arr_len-1)  get_space(COLUMNS-_space_len-_info_arr_len+1) "\n" "\033[0;40m" get_space(_space_len-1) "|" "\033[1;36;40m" cut_info_line(substr(_info,_info_arr_len),_space_len)
+        _info_line = _info_line substr(_info,1,_info_arr_len-1)  get_space(COLUMNS-_space_len-_info_arr_len+1) "\n" "\033[1;40m" get_space(_space_len) "" cut_info_line(substr(_info,_info_arr_len),_space_len)
     } else {
-        _info_line = _info "\033[0;40m" get_space(COLUMNS-_space_len-length(_info))
+        _info_line = _info "\033[0;40m" " " get_space(COLUMNS-_space_len-length(_info)-1)
     }
     return _info_line
 }
-
 function handle_title(title){
-    printf("\033[0;40m%s \033[0;40m", get_space(COLUMNS-1))
+    printf("\033[0;40m%s \033[1;40m", get_space(COLUMNS-1))
     printf("\033[1;33;40m%s\033[0;40m", "")
     printf("\033[1;32;40m%s: \033[0;40m", title)
     title_len=length(title)+2
@@ -43,16 +42,41 @@ function handle_desc(desc){
     title_len=0
 }
 
-function handle_cmd(cmd, text, _max_len){
+function handle_cmd(cmd,_max_len){
     _max_len=0
     for (key in cmd){
         if (length(key) > _max_len) _max_len = length(key)
     }
+    if (_max_len > 120){
+        handle_long_cmd(cmd)
+    }else{
+        handle_short_cmd(cmd,_max_len)
+    }
+}
 
+function handle_short_cmd(cmd, _max_len, text, i){
+    i=0
+    for (key in cmd){
+        i++
+        # debug(key": "cmd[key])
+        if(i%2 == 0){
+            text="\033[1;37;40m" key "\033[0;40m" get_space(_max_len-length(key)+2) "\033[1;30;40m"cut_info_line(cmd[key],_max_len+2)
+        }else{
+            text="\033[1;33;40m" key "\033[0;40m" get_space(_max_len-length(key)+2) "\033[1;36;40m"cut_info_line(cmd[key],_max_len+2)
+        }
+        printf("%s\n\033[0;40m", text)
+    }
+}
+
+function handle_long_cmd(cmd, info, info_len){
     for (key in cmd){
         printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
-        text=key "\033[0;40m" get_space(_max_len-length(key)+1) "|" "\033[1;36;40m"cut_info_line(cmd[key],_max_len+2)
-        printf("\033[1;33;40m%s\n\033[0;40m", text)
+        printf("\033[1;33;40m%s\033[0;40m", substr(key,2) get_space(COLUMNS-length(key)+1))
+        # printf ( "%s\n", sprintf("%" COLUMNS-length(key) "s", "  "))
+        gsub(/:[ ]*$/, "", cmd[key])
+        info_len=length(cmd[key])
+        printf("    \033[1;36;40m%s\033[0;40m", cmd[key])
+        printf ( "%s\n", sprintf("%" COLUMNS-info_len-4 "s", ""))
     }
 }
 
@@ -83,8 +107,11 @@ BEGIN {
         cmd_info = desc
     } else {
         if ($0 ~ /^`[^`]+`/) {
-            cmd_text = "    " substr($0, 2, length($0)-2)
+            gsub("`","   ",$0)
+            cmd_text = substr($0, 1, length($0)-4)
             cmd[cmd_text] = cmd_info
+            cmd_info=""
+            cmd_text=""
         }
     }
 }

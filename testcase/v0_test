@@ -1,9 +1,9 @@
 # shellcheck shell=bash
-cat java.md | awk -f "./v0_test.awk"
+cat testcase/java.md | awk -f "v0.awk"
 test(){
     local fp="$@"
-    cat "$fp" | awk -f "./v0_test.awk"
+    cat "$fp" | awk -f "./v0.awk"
 }
 . ./v0
-______X_CMD_TLDR_AWK="./v0_cut.awk"
-tldr cat java
+______X_CMD_TLDR_AWK="./v0.awk"
+# tldr cat ldapsearch

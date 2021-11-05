@@ -32,7 +32,7 @@ function cut_info_line(_info,_space_len,_info_len,_info_arr_len,_info_line){
 }
 
 function handle_title(title){
-    printf("\033[0;40m%s \n\033[0;40m", get_space(COLUMNS-1))
+    printf("\033[0;40m%s#\n\033[1;40m", get_space(COLUMNS-1))
     printf("\033[1;33;40m%s\033[0;40m", "")
     printf("\033[1;32;40m%s: \033[0;40m", title)
     title_len=length(title)+2
@@ -44,11 +44,16 @@ function handle_desc(desc){
     title_len=0
 }
 
-function handle_cmd(cmd, info){
+function handle_cmd(cmd, info, info_len){
     printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
     printf("\033[1;33;40m%s\033[0;40m", cmd)
     printf ( "%s\n", sprintf("%" COLUMNS-length(cmd) "s", ""))
     gsub(/:[ ]*$/, "", info)
+    info_len=length(info)
+    # while(match(info, /`[^`]+`/)){
+    #     info = substr(info,1,RSTART-1) "\033[1;35;40m" substr(info,RSTART+1, RLENGTH-2) "\033[1;36;40m" substr(info, RSTART + RLENGTH)
+    #     info_len=info_len-2
+    # }
     printf("    \033[1;36;40m%s\033[0;40m", info)
     printf ( "%s\n", sprintf("%" COLUMNS-length(info)-4 "s", ""))
 }

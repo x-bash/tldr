@@ -7,8 +7,6 @@
 xrc param/v0
 
 ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
-______X_CMD_TLDR_AWK_LONG="./v0_long.awk"
-______X_CMD_TLDR_AWK_SHORT="./v0_short.awk"
 
 ______X_CMD_TLDR_LANG="
 en
@@ -179,7 +177,6 @@ ___tldr_lsname(){
 ___tldr_ls()(
     local version
     version="$(___tldr_current_or_update)" || return
-
     if cd "$_______X_CMD_TLDR_ROOT/$version/pages/"; then
         local cmd="${1}"
         case "$cmd" in
@@ -216,13 +213,13 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                echo "$COLUMNS"
-                if [ "$COLUMNS" -ge  160 ]; then
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_LONG" <"$(___tldr_getfile "$cand")"
-                else
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_SHORT" <"$(___tldr_getfile "$cand")"
-                fi
-                # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
+                # echo "$COLUMNS"
+                # if [ "$COLUMNS" -ge  160 ]; then
+                #     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_LONG" <"$(___tldr_getfile "$cand")"
+                # else
+                #     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK_SHORT" <"$(___tldr_getfile "$cand")"
+                # fi
+                awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
             else
                 cat "$(___tldr_getfile "$cand")"
             fi
