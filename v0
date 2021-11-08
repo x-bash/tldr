@@ -8,6 +8,7 @@ xrc param/v0
 
 # ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
 ______X_CMD_TLDR_AWK="./v0.awk"
+______X_CMD_TLDR_WCWIDTH_AWK="wcwidth.awk"
 
 ______X_CMD_TLDR_LANG="
 en
@@ -216,9 +217,9 @@ ___tldr_cat(){
             if [ -t 1 ]; then
                 # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
                 if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
                 else
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
+                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
                 fi
             else
                 cat "$(___tldr_getfile "$cand")"
