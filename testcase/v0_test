@@ -1,20 +1,37 @@
 # shellcheck shell=sh disable=SC3043
 
 xrc tldr
+x log init tldr
+
+___X_BASH_UI_MARKDOWN_AWK="./v0.awk"
 
 ___tldr(){
 
     echo "$@"
     if [ $# -ne 0 ]; then
+        echo "tldr1 $* ddd$___X_BASH_UI_MARKDOWN_AWK" >&2
         cat "$@"
     else
+        echo "tldr2 $* ddd$___X_BASH_UI_MARKDOWN_AWK" >&2
         cat
     fi | awk -v COLUMNS="$COLUMNS" "$(cat ./wcwidth.awk)$(cat "$___X_BASH_UI_MARKDOWN_AWK")"
 }
 
-___tldr ./testcase/7z.md
-___tldr ./testcase/7z-zh.md
-___tldr ./testcase/ag-ko.md
-___tldr ./testcase/java.md
-___tldr ./testcase/ldapsearch.md
-# ___ui_markdown ./testcase/test_table.md
+test_tldr() {
+    ls testcase
+    ___tldr ./testcase/7z.md
+    ___tldr ./testcase/7z-zh.md
+    ___tldr ./testcase/ag-ko.md
+    ___tldr ./testcase/java.md
+    ___tldr ./testcase/ldapsearch.md
+    # ___ui_markdown ./testcase/test_table.md
+}
+
+cross_shell_test() {
+    for i in debian centos alpine ; do
+        tldr_log info "Testing : " "$i"
+        docker run -it -v  ~/.x-cmd/:/root/.x-cmd/ -v "$(pwd)":/pd "${i}" sh -c ". ~/.x-cmd/xrc/latest && cd pd && . ./testcase/v0_test"
+    done
+}
+
+test_tldr
