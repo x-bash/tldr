@@ -27,12 +27,12 @@ function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr
             _info_arr_len=_info_arr_len + strlen_without_color(_info_arr[key])+1
             _info_arr_real_len=_info_arr_real_len+length(_info_arr[key])+1
             if (_info_arr_len > COLUMNS-_space_len){
-                _info_arr_len = _info_arr_len-strlen_without_color(_info_arr[key])
-                _info_arr_real_len = _info_arr_real_len-length(_info_arr[key])
+                _info_arr_len = _info_arr_len-strlen_without_color(_info_arr[key])-1
+                _info_arr_real_len = _info_arr_real_len-length(_info_arr[key])-1
                 break
             }
         }
-        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) "\n" "\033[1;40m" _color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
+        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) "\n"_color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
         _info_arr_len=0
         _info_arr_real_len=0
     } else {
