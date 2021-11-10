@@ -1,6 +1,6 @@
 # shellcheck shell=sh disable=SC3043
 
-. ./_v0
+. ./v0
 ___X_BASH_UI_MARKDOWN_AWK="./v0.awk"
 
 ___tldr(){
