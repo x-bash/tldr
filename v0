@@ -47,6 +47,8 @@ $(stty size)
 A
     fi
 }
+___tldr_init_lines_columns
+
 
 tldr(){
     param:dsl <<A
@@ -205,6 +207,7 @@ ___tldr_exact()(
 )
 
 ___tldr_cat(){
+
     cand="$( ___tldr_exact "$@" )"
     local num
     num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"

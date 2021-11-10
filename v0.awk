@@ -32,13 +32,13 @@ function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr
                 break
             }
         }
-        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) "\n" "\033[1;40m" _color get_space(_space_len) "" cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
+        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) "\n" "\033[1;40m" _color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
         _info_arr_len=0
         _info_arr_real_len=0
     } else {
-        _info_line = _info " " get_space(COLUMNS-_space_len-wcswidth(_info)-1)
+        _info_line = _info get_space(COLUMNS-_space_len-wcswidth(_info)-1) " "
     }
-    return _info_line
+    return _color _info_line
 }
 
 function handle_title(title){
