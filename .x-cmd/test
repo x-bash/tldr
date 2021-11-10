@@ -1,2 +1,4 @@
 mkdir -p ~/.x-cmd/tldr/
 cp v0* ~/.x-cmd/tldr/
+cp latest ~/.x-cmd/tldr/
+. ./testcase/v0_test
