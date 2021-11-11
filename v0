@@ -40,12 +40,13 @@ zh_TW
 "
 
 ___tldr_init_lines_columns(){
-    if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
+    # TODO: why
+    # if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
         local IFS
         read -r LINES COLUMNS <<A
 $(stty size)
 A
-    fi
+    # fi
 }
 ___tldr_init_lines_columns
 
