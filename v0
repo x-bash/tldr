@@ -43,6 +43,7 @@ ___tldr_init_lines_columns(){
     # TODO: why
     # if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
         local IFS
+        IFS=" "
         read -r LINES COLUMNS <<A
 $(stty size)
 A
