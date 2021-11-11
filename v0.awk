@@ -16,27 +16,40 @@ function get_space(space_len,_space, _j){
     return _space
 }
 
-function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line){
+function cut_text_get_arr(_text,i){
+    i=0;
+    while(match(_text,/ /)){
+        _arr[i]=substr(_text,1,RSTART)
+        _text=substr(_text,RSTART+1)
+        i++
+    }
+    _arr[i]=_text
+    i++
+    return i
+}
+
+function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line,_info_srr_key){
     _info_line = ""
     _info_arr_len = 0
     _info_arr_real_len=0
+    _info_srr_key=0
     _info_len = strlen_without_color(_info)
-    split(_info,_info_arr," ")
+    _info_srr_key=cut_text_get_arr(_info)
     if (_info_len > COLUMNS-_space_len){
-        for (key in _info_arr){
-            _info_arr_len=_info_arr_len + strlen_without_color(_info_arr[key])+1
-            _info_arr_real_len=_info_arr_real_len+length(_info_arr[key])+1
+        for (i=0;i<_info_srr_key;i++){
+            _info_arr_len=_info_arr_len + strlen_without_color(_arr[i])
+            _info_arr_real_len=_info_arr_real_len+length(_arr[i])
             if (_info_arr_len > COLUMNS-_space_len){
-                _info_arr_len = _info_arr_len-strlen_without_color(_info_arr[key])-1
-                _info_arr_real_len = _info_arr_real_len-length(_info_arr[key])-1
+                _info_arr_len = _info_arr_len-strlen_without_color(_arr[i])
+                _info_arr_real_len = _info_arr_real_len-length(_arr[i])
                 break
             }
         }
-        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) "\n"_color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
+        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) ""_color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
         _info_arr_len=0
         _info_arr_real_len=0
     } else {
-        _info_line = _info get_space(COLUMNS-_space_len-wcswidth(_info)-1) " "
+        _info_line = _info get_space(COLUMNS-_space_len-wcswidth(_info)-1) "|"
     }
     return _color _info_line
 }
@@ -144,4 +157,14 @@ BEGIN {
 END {
     handle_cmd(cmd)
     printf("\033[0;40m%s%s\033[0m\n", get_space(COLUMNS-1)," ")
+    # zqk=" Execute a java `.class` file that contains `a` main method by using just the 天气真好 name:"
+    # key=get_arr(zqk)
+    # for(i=0;i<key;i++){
+    #     debug(_arr[i])
+    # }
+    # zqk="Execute a `.jar` program with debug waiting to connect on port 5005:"
+    # key=get_arr(zqk)
+    # for(i=0;i<key;i++){
+    #     debug(_arr[i])
+    # }
 }

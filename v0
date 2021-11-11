@@ -219,11 +219,11 @@ ___tldr_cat(){
         1)
             if [ -t 1 ]; then
                 # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
-                if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
-                else
+                # if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
+                #     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
+                # else
                     awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
-                fi
+                # fi
             else
                 cat "$(___tldr_getfile "$cand")"
             fi
