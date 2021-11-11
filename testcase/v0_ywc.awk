@@ -86,12 +86,12 @@ function handle_short_cmd(cmd, _max_len, info, text, i){
         i++
         info=cmd[key]
         if(i%2 == 0){
-            while(match(key, /{{[^{]+}}/)){
+            while(match(key, /\{\{[^\{]+\}}/)){
                 key = substr(key,1,RSTART-1) "\033[1;32;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;33;40m" substr(key, RSTART + RLENGTH)
             }
             text="\033[1;33;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;32;40m" cut_info_line(info,_max_len+2, "\033[1;32;40m")
         }else{
-            while(match(key, /{{[^{]+}}/)){
+            while(match(key, /\{\{[^\{]+\}}/)){
                 key = substr(key,1,RSTART-1) "\033[1;36;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;37;40m" substr(key, RSTART + RLENGTH)
             }
             text="\033[1;37;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;36;40m" cut_info_line(info,_max_len+2, "\033[1;36;40m")
@@ -105,7 +105,7 @@ function handle_long_cmd(cmd, info, info_len, cmd_len){
         printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
         cmd_len=0
         info=cmd[key]
-        while(match(key, /{{[^{]+}}/)){
+        while(match(key, /\{\{[^\{]+\}}/)){
             key = substr(key,1,RSTART-1) "\033[1;37;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;33;40m" substr(key, RSTART + RLENGTH)
         }
         cmd_len=strlen_without_color(key)
@@ -157,14 +157,4 @@ BEGIN {
 END {
     handle_cmd(cmd)
     printf("\033[0;40m%s%s\033[0m\n", get_space(COLUMNS-1)," ")
-    # zqk=" Execute a java `.class` file that contains `a` main method by using just the 天气真好 name:"
-    # key=get_arr(zqk)
-    # for(i=0;i<key;i++){
-    #     debug(_arr[i])
-    # }
-    # zqk="Execute a `.jar` program with debug waiting to connect on port 5005:"
-    # key=get_arr(zqk)
-    # for(i=0;i<key;i++){
-    #     debug(_arr[i])
-    # }
 }

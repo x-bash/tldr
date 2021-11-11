@@ -5,11 +5,7 @@ function debug(msg){
 
 function strlen_without_color(text){
     gsub(/\033\[([0-9]+;)*[0-9]+m/, "", text)
-    if (IF_BUSYBOX){
-        return length(text)
-    }else{
-        return wcswidth(text)
-    }
+    return length(text)
 }
 
 function get_space(space_len,_space, _j){
@@ -20,16 +16,16 @@ function get_space(space_len,_space, _j){
     return _space
 }
 
-function cut_text_get_arr(_text,i){
-    i=0;
+function cut_text_get_arr(_text,_i){
+    _i=0;
     while(match(_text,/ /)){
-        _arr[i]=substr(_text,1,RSTART)
+        _arr[_i]=substr(_text,1,RSTART)
         _text=substr(_text,RSTART+1)
-        i++
+        _i++
     }
     _arr[i]=_text
-    i++
-    return i
+    _i++
+    return _i
 }
 
 function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line,_info_srr_key){
@@ -53,7 +49,7 @@ function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr
         _info_arr_len=0
         _info_arr_real_len=0
     } else {
-        _info_line = _info
+        _info_line = _info _color
     }
     return _color _info_line
 }
@@ -67,7 +63,7 @@ function handle_title(title){
 
 function handle_desc(desc){
     printf("\033[1;33;40m%s\n\033[0;40m", desc)
-    # printf ( "%s\n", sprintf("%" COLUMNS-wcswidth(desc)-title_len "s", " "))
+    # printf ( "%s\n", sprintf("%" COLUMNS-wcswidth(desc)-title_len "s", "8"))
     # title_len=0
 }
 
@@ -75,7 +71,7 @@ function handle_desc(desc){
 function handle_cmd(cmd,_max_len){
     _max_len=0
     for (key in cmd){
-        if (strlen_without_color(key) > _max_len) _max_len = strlen_without_color(key)
+        if (length(key) > _max_len) _max_len = length(key)
     }
     if (_max_len > COLUMNS*0.67){
         handle_long_cmd(cmd)
@@ -91,17 +87,18 @@ function handle_short_cmd(cmd, _max_len, info, text, i){
         i++
         info=cmd[key]
         if(i%2 == 0){
-            while(match(key, /\{\{[^\{]+\}}/)){
+            while(match(key, /\{\{[^\{]+\}\}/)){
                 key = substr(key,1,RSTART-1) "\033[1;32;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;33;40m" substr(key, RSTART + RLENGTH)
             }
-            text="\033[1;33;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;32;40m" cut_info_line(info,_max_len+2, "\033[1;32;40m")
+            text="\033[1;33;40m" key "\033[0;40m" get_space(_max_len-length(key)+2) "\033[1;32;40m" cut_info_line(info,_max_len+2, "\033[1;32;40m")
         }else{
-            while(match(key, /\{\{[^\{]+\}}/)){
+            while(match(key, /\{\{[^\{]+\}\}/)){
                 key = substr(key,1,RSTART-1) "\033[1;36;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;37;40m" substr(key, RSTART + RLENGTH)
             }
-            text="\033[1;37;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;36;40m" cut_info_line(info,_max_len+2, "\033[1;36;40m")
+            text="\033[1;37;40m" key "\033[0;40m" get_space(_max_len-length(key)+2) "\033[1;36;40m" cut_info_line(info,_max_len+2, "\033[1;36;40m")
         }
-        printf("\r%s\n\033[0;40m", text)
+
+        printf("\r%s\033[0;40m", text)
     }
 }
 
@@ -116,7 +113,7 @@ function handle_long_cmd(cmd, info, info_len, cmd_len){
         }
         cmd_len=strlen_without_color(key)
         gsub(/:[ ]*$/, "", info)
-        info_len=strlen_without_color(info)
+        info_len=length(info)
         if(cmd_len > COLUMNS){
             cmd_len=cmd_len-COLUMNS
         }
