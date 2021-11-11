@@ -3,6 +3,7 @@ function debug(msg){
     print "\033[1;31m" msg "\033[0;0m" > "/dev/stderr"
 }
 
+# If the currently running shell is BusyBox, do not use the wcswidth function.
 function strlen_without_color(text){
     gsub(/\033\[([0-9]+;)*[0-9]+m/, "", text)
     if (IF_BUSYBOX){
