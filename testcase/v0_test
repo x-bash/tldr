@@ -17,7 +17,7 @@ test_tldr() {
 }
 
 cross_shell_test() {
-    for i in debian centos alpine ; do
+    for i in debian alpine centos; do
         tldr_log info "Testing : " "$i"
         docker run -it -v  ~/.x-cmd/:/root/.x-cmd/ -v "$(pwd)":/pd "${i}" sh -c " . ~/.x-cmd/xrc/latest && cd pd && . ./testcase/v0_test"
     done

@@ -223,7 +223,12 @@ ___tldr_cat(){
                 # else
                 #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
                 # fi
-                awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
+                # awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
+                if awk --help 2>&1 | grep BusyBox > /dev/null; then
+                    awk -v COLUMNS="$COLUMNS" -v IF_BUSYBOX=1 "$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
+                else
+                    awk -v COLUMNS="$COLUMNS" -v IF_BUSYBOX=0 "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
+                fi
             else
                 cat "$(___tldr_getfile "$cand")"
             fi
