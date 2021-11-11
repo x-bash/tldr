@@ -16,16 +16,16 @@ function get_space(space_len,_space, _j){
     return _space
 }
 
-function cut_text_get_arr(_text,_i){
-    _i=0;
+function cut_text_get_arr(_text,i){
+    i=0;
     while(match(_text,/ /)){
-        _arr[_i]=substr(_text,1,RSTART)
+        _arr[i]=substr(_text,1,RSTART)
         _text=substr(_text,RSTART+1)
-        _i++
+        i++
     }
     _arr[i]=_text
-    _i++
-    return _i
+    i++
+    return i
 }
 
 function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line,_info_srr_key){
@@ -49,7 +49,7 @@ function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr
         _info_arr_len=0
         _info_arr_real_len=0
     } else {
-        _info_line = _info get_space(COLUMNS-_space_len-wcswidth(_info)-1) "|"
+        _info_line = _info get_space(COLUMNS-_space_len-wcswidth(_info)-1) " "
     }
     return _color _info_line
 }
@@ -157,4 +157,14 @@ BEGIN {
 END {
     handle_cmd(cmd)
     printf("\033[0;40m%s%s\033[0m\n", get_space(COLUMNS-1)," ")
+    # zqk=" Execute a java `.class` file that contains `a` main method by using just the 天气真好 name:"
+    # key=get_arr(zqk)
+    # for(i=0;i<key;i++){
+    #     debug(_arr[i])
+    # }
+    # zqk="Execute a `.jar` program with debug waiting to connect on port 5005:"
+    # key=get_arr(zqk)
+    # for(i=0;i<key;i++){
+    #     debug(_arr[i])
+    # }
 }

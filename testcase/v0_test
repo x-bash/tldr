@@ -12,14 +12,14 @@ test_tldr() {
     tldr testcase/ag-ko.md
     echo "test java:"
     tldr testcase/java.md
-    echo "test ldapsearch"
+    echo "test ldapsearch:"
     tldr testcase/ldapsearch.md
 }
 
 cross_shell_test() {
     for i in debian centos alpine ; do
         tldr_log info "Testing : " "$i"
-        docker run -it -v  ~/.x-cmd/:/root/.x-cmd/ -v "$(pwd)":/pd "${i}" sh -c ". ~/.x-cmd/xrc/latest && cd pd && . ./testcase/v0_test"
+        docker run -it -v  ~/.x-cmd/:/root/.x-cmd/ -v "$(pwd)":/pd "${i}" sh -c " . ~/.x-cmd/xrc/latest && cd pd && . ./testcase/v0_test"
     done
 }
 
