@@ -7,7 +7,7 @@
 xrc param/v0
 
 # ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
-______X_CMD_TLDR_AWK="v0.awk"
+______X_CMD_TLDR_AWK="./v0.awk"
 ______X_CMD_TLDR_WCWIDTH_AWK="wcwidth.awk"
 
 ______X_CMD_TLDR_LANG="
@@ -47,6 +47,8 @@ $(stty size)
 A
     fi
 }
+___tldr_init_lines_columns
+
 
 tldr(){
     param:dsl <<A
@@ -204,7 +206,6 @@ ___tldr_exact()(
 )
 
 ___tldr_cat(){
-    ___tldr_init_lines_columns
     cand="$( ___tldr_exact "$@" )"
     local num
     num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
@@ -215,12 +216,12 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                # awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
-                if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_WCWIDTH_AWK" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")" | less -R
-                else
-                    awk -v COLUMNS="$COLUMNS" -f "$______X_CMD_TLDR_AWK" <"$(___tldr_getfile "$cand")"
-                fi
+                # if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
+                #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")" | less -R
+                # else
+                #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
+                # fi
+                awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
             else
                 cat "$(___tldr_getfile "$cand")"
             fi

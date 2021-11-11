@@ -318,7 +318,7 @@ function _wcwidth_initialize_library(    _entry, _nul)
 
     split("X", WCWIDTH_CACHE)
 
-    WCWIDTH_INTERVAL_EXPRESSIONS_SUPPORTED = "XXXX" ~ /^X{,4}$/
+    WCWIDTH_INTERVAL_EXPRESSIONS_SUPPORTED = "XXXX" ~ /^X{0,4}$/
     WCWIDTH_MULTIBYTE_SAFE = length("宽") == 1
 
     if (!WCWIDTH_MULTIBYTE_SAFE) {

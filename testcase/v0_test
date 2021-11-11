@@ -1,8 +1,26 @@
-# shellcheck shell=bash
-cat testcase/java.md | awk -f "v0.awk"
-test(){
-    local fp="$@"
-    cat "$fp" | awk -f "./v0.awk"
+# shellcheck shell=sh disable=SC3043
+
+xrc tldr
+x log init tldr
+
+test_tldr() {
+    echo "test 7z:"
+    tldr testcase/7z.md
+    echo "test 7z-zh:"
+    tldr testcase/7z-zh.md
+    # echo "test ag-ko:"
+    # tldr testcase/ag-ko.md
+    # echo "test java:"
+    # tldr testcase/java.md
+    echo "test ldapsearch:"
+    tldr testcase/ldapsearch.md
 }
-. ./v0
-# tldr cat ldapsearch
+
+cross_shell_test() {
+    for i in debian alpine ; do
+        tldr_log info "Testing : " "$i"
+        docker run -it -v  ~/.x-cmd/:/root/.x-cmd/ -v "$(pwd)":/pd "${i}" sh -c " . ~/.x-cmd/xrc/latest && cd pd && . ./testcase/v0_test"
+    done
+}
+
+test_tldr

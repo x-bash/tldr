@@ -1,2 +1,10 @@
+. ~/.x-cmd/.boot/boot
+
 mkdir -p ~/.x-cmd/tldr/
+mkdir -p ~/.x-cmd/.tmp/tldr/v1.5/pages/testcase/
 cp v0* ~/.x-cmd/tldr/
+cp latest ~/.x-cmd/tldr/
+cp wcwidth.awk ~/.x-cmd/tldr/
+cp testcase/*.md ~/.x-cmd/.tmp/tldr/v1.5/pages/testcase/
+. ./testcase/v0_test
+cross_shell_test
