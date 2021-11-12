@@ -1,4 +1,4 @@
-# shellcheck shell=bash disable=SC2039,3043
+# shellcheck shell=sh disable=SC2039,3043
 
 # author:       Li Junhao           l@x-cmd.com    edwinjhlee.github.io
 
@@ -6,11 +6,8 @@
 
 xrc param/v0
 
-# TODO: To use xrc
-# ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
-______X_CMD_TLDR_AWK="./v0.awk"
-# TODO: Use the wcwidth.awk in the ui repo
-______X_CMD_TLDR_WCWIDTH_AWK="wcwidth.awk"
+______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+______X_CMD_TLDR_WCWIDTH_AWK="$(xrc which ui/_v0/wcwidth.awk)"
 
 ______X_CMD_TLDR_LANG="
 en
@@ -41,18 +38,7 @@ zh
 zh_TW
 "
 
-# TODO: To use function in ui
-___tldr_init_lines_columns(){
-    # TODO: Why just use in bash and zsh?
-    # if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
-        local IFS
-        IFS=" "
-        read -r LINES COLUMNS <<A
-$(stty size)
-A
-    # fi
-}
-___tldr_init_lines_columns
+xrc ui/v0
 
 
 tldr(){
@@ -80,9 +66,9 @@ _______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
 
 _______tldr_download(){
     local src="${1:?src}"
-    local dst="${2:-$1}"
+    local dst
+    dst="${2:-$1}"
 
-    # TODO: CACHE is use in ___x_cmd_curl ? (Maybe it's not used)
     local CACHE="$_______X_CMD_TLDR_ROOT/$dst"
 
     local url="https://gitee.com/x-cmd/tldr/raw/main/dist/$src"
@@ -98,8 +84,8 @@ ___tldr_current(){
         return 1
     fi
 
-    # TODO: Declare and assign separately to avoid masking return values.shellcheck(SC2155)
-    local version="$(cat "$_______X_CMD_TLDR_ROOT/index.yml")"
+    local version
+    version="$(cat "$_______X_CMD_TLDR_ROOT/index.yml")"
     version="${version%%
 *}"
     version="${version#* }"
@@ -131,7 +117,8 @@ ___tldr_update()(
         return 1
     fi
 
-    local version="$(___tldr_current)"
+    local version
+    version="$(___tldr_current)"
     version="${version%%
 *}"
     version="${version#* }"
@@ -225,13 +212,6 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                # TODO: Remove these comments. Because they are not used that we can found it from git history.
-                # if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
-                #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")" | less -R
-                # else
-                #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
-                # fi
-                # awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
                 if awk --help 2>&1 | grep BusyBox > /dev/null; then
                     awk -v COLUMNS="$COLUMNS" -v IF_BUSYBOX=1 "$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")"
                 else
