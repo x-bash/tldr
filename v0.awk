@@ -1,9 +1,5 @@
 # Section: visualize
 
-# TODO: Please use more space to write your code
-# TODO: The local variables should use '_' as a prefix
-# TODO: Distinguish between parameters and local variables. like 'cut_info_line(info, space_len, color,        _info_len, _info_arr_len, ...){'
-
 function debug(msg){
     print "\033[1;31m" msg "\033[0;0m" > "/dev/stderr"
 }
@@ -11,9 +7,9 @@ function debug(msg){
 # If the currently running shell is BusyBox, do not use the wcswidth function.
 function strlen_without_color(text){
     gsub(/\033\[([0-9]+;)*[0-9]+m/, "", text)
-    if (IF_BUSYBOX){
+    if (IF_BUSYBOX) {
         return length(text)
-    }else{
+    } else {
         return wcswidth(text)
     }
 }
@@ -27,16 +23,12 @@ function get_space(space_len,      _space, _j){
 }
 
 function cut_text_get_arr(text,     _i){
-    # TODO: Please use for instead of while
-    _i = 0;
-    while(match(text,/ /)){
+    for (_i=0; match(text,/ /); _i++) {
         _arr[_i] = substr(text,1,RSTART)
         text     = substr(text,RSTART+1)
-        _i++
     }
     _arr[_i] = text
-    _i++
-    return _i
+    return _i + 1
 }
 
 function cut_info_line(info, space_len, color,
@@ -49,13 +41,12 @@ function cut_info_line(info, space_len, color,
     _info_len     = strlen_without_color(info)
     _info_arr_key = cut_text_get_arr(info)
 
-    if (_info_len >= COLUMNS-space_len){
-        for (i=0; i<_info_arr_key; i++){
-            # TODO: Here the equal sign can be aligned
+    if (_info_len >= COLUMNS-space_len) {
+        for (i=0; i<_info_arr_key; i++) {
             _info_arr_len      = _info_arr_len + strlen_without_color(_arr[i])
             _info_arr_real_len = _info_arr_real_len + length(_arr[i])
 
-            if (_info_arr_len >= COLUMNS-space_len){
+            if (_info_arr_len >= COLUMNS-space_len) {
                 _info_arr_len      = _info_arr_len - strlen_without_color(_arr[i])
                 _info_arr_real_len = _info_arr_real_len - length(_arr[i])
                 break
@@ -86,23 +77,24 @@ function handle_cmd(cmd,     _max_len, _i, _key_len, _cmd_text){
     _key_len = 0
 
     printf("\033[0;40m%s%s\033[1;40m", get_space(COLUMNS-1), " ")
-    for (_i=0;_i<cmd_key;_i++){
+    for (_i=0; _i<cmd_key; _i++) {
         _cmd_text = cmd[ _i "text"]
-        while(match(_cmd_text, /\{\{[^\{]+\}}/)){
+
+        while (match(_cmd_text, /\{\{[^\{]+\}}/)) {
             _cmd_text = substr(_cmd_text,1,RSTART-1) out_cmd_key_color substr(_cmd_text,RSTART+2, RLENGTH-4) out_cmd_key_color substr(_cmd_text, RSTART + RLENGTH)
         }
 
         _key_len        = strlen_without_color(_cmd_text)
         cmd[ _i "text"] = _cmd_text
 
-        if (_key_len > _max_len){
+        if (_key_len > _max_len) {
             _max_len = _key_len
         }
     }
 
-    if (_max_len > COLUMNS*0.67){
+    if (_max_len > COLUMNS*0.67) {
         handle_long_cmd(cmd)
-    }else{
+    } else {
         handle_short_cmd(cmd,_max_len)
     }
 }
@@ -110,15 +102,16 @@ function handle_cmd(cmd,     _max_len, _i, _key_len, _cmd_text){
 function handle_short_cmd(cmd, max_len,
     _cmd_info, _cmd_text, _i){
 
-    for (_i=0;_i<cmd_key;_i++){
+    for (_i=0; _i<cmd_key; _i++) {
         _cmd_info = cmd[ _i "info"]
         _cmd_text = cmd[ _i "text"]
-        if(_i%2 == 0){
+
+        if (_i%2 == 0) {
             out_cmd_key_color  = "\033[1;33;40m"
             out_cmd_info_color = "\033[1;32;40m"
             text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,max_len+4, out_cmd_info_color)
             gsub(/:[ ]*$/, "", text)
-        }else{
+        } else {
             out_cmd_key_color  = "\033[1;37;40m"
             out_cmd_info_color = "\033[1;36;40m"
             text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,max_len+4, out_cmd_info_color)
@@ -130,12 +123,12 @@ function handle_short_cmd(cmd, max_len,
 function handle_long_cmd(cmd,
     _cmd_info, _cmd_text, _i, _info, _cmd_len){
 
-    for (_i=0;_i<cmd_key;_i++){
+    for (_i=0; _i<cmd_key; _i++) {
         _cmd_len = strlen_without_color(cmd[ _i "text"])
         _info    = cmd[ _i "info"]
         gsub(/:[ ]*$/, "", _info)
 
-        while(_cmd_len > COLUMNS){
+        while (_cmd_len > COLUMNS) {
             _cmd_len=_cmd_len-COLUMNS
         }
 
@@ -158,7 +151,7 @@ BEGIN {
 {
     if ($0 ~ /^[ \t\r]*$/){
 
-    }else if ($1~/^#/)
+    } else if ($1~/^#/)
     {
         title = $0
         gsub(/^#[ ]*/, "", title)
