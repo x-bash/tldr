@@ -63,20 +63,29 @@ function handle_title(title){
     printf("\033[0;40m%s\033[1;40m", get_space(COLUMNS))
     printf("\033[1;33;40m%s\033[0;40m", "")
     printf("\033[1;32;40m%s: \033[0;40m", title)
-    # title_len=length(title)+2
 }
 
 function handle_desc(desc){
     printf("\033[1;33;40m%s\n\033[0;40m", desc)
-    # printf ( "%s\n", sprintf("%" COLUMNS-wcswidth(desc)-title_len "s", " "))
-    # title_len=0
 }
 
 
-function handle_cmd(cmd,_max_len){
+function handle_cmd(cmd, _max_len, _i, _key, _key_len, _cmd_text){
+    printf("\033[0;40m%s%s\033[1;40m", get_space(COLUMNS-1), " ")
     _max_len=0
-    for (key in cmd){
-        if (strlen_without_color(key) > _max_len) _max_len = strlen_without_color(key)
+    _key_len=0
+
+    for (_i=0;_i<cmd_key;_i++){
+        _bracket_len=0
+        _cmd_text = cmd[ _i "text"]
+        while(match(_cmd_text, /\{\{[^\{]+\}}/)){
+            _cmd_text = substr(_cmd_text,1,RSTART-1) out_cmd_key_color substr(_cmd_text,RSTART+2, RLENGTH-4) out_cmd_key_color substr(_cmd_text, RSTART + RLENGTH)
+        }
+        _key_len = strlen_without_color(_cmd_text)
+        cmd[ _i "text"]=_cmd_text
+        if (_key_len > _max_len){
+            _max_len = _key_len
+        }
     }
     if (_max_len > COLUMNS*0.67){
         handle_long_cmd(cmd)
@@ -85,44 +94,36 @@ function handle_cmd(cmd,_max_len){
     }
 }
 
-function handle_short_cmd(cmd, _max_len, info, text, i){
-    i=0
-    for (key in cmd){
-        printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
-        i++
-        info=cmd[key]
-        if(i%2 == 0){
-            while(match(key, /\{\{[^\{]+\}}/)){
-                key = substr(key,1,RSTART-1) "\033[1;32;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;33;40m" substr(key, RSTART + RLENGTH)
-            }
-            text="\033[1;33;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;32;40m" cut_info_line(info,_max_len+2, "\033[1;32;40m")
+function handle_short_cmd(cmd, _max_len, _cmd_info, _cmd_text, _i){
+
+    for (_i=0;_i<cmd_key;_i++){
+        _cmd_info = cmd[ _i "info"]
+        _cmd_text = cmd[ _i "text"]
+        if(_i%2 == 0){
+            out_cmd_key_color = "\033[1;33;40m"
+            out_cmd_info_color = "\033[1;32;40m"
+            text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(_max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,_max_len+4, out_cmd_info_color)
+            gsub(/:[ ]*$/, "", text)
         }else{
-            while(match(key, /\{\{[^\{]+\}}/)){
-                key = substr(key,1,RSTART-1) "\033[1;36;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;37;40m" substr(key, RSTART + RLENGTH)
-            }
-            text="\033[1;37;40m" key "\033[0;40m" get_space(_max_len-strlen_without_color(key)+2) "\033[1;36;40m" cut_info_line(info,_max_len+2, "\033[1;36;40m")
+            out_cmd_key_color = "\033[1;37;40m"
+            out_cmd_info_color = "\033[1;36;40m"
+            text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(_max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,_max_len+4, out_cmd_info_color)
         }
-        printf("\r%s\n\033[0;40m", text)
+        printf("%s\n\033[0;40m", text)
     }
 }
 
-function handle_long_cmd(cmd, info, info_len, cmd_len){
-    for (key in cmd){
-        printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
-        printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
-        cmd_len=0
-        info=cmd[key]
-        while(match(key, /\{\{[^\{]+\}}/)){
-            key = substr(key,1,RSTART-1) "\033[1;37;40m" substr(key,RSTART+2, RLENGTH-4) "\033[1;33;40m" substr(key, RSTART + RLENGTH)
-        }
-        cmd_len=strlen_without_color(key)
-        gsub(/:[ ]*$/, "", info)
-        info_len=strlen_without_color(info)
+function handle_long_cmd(cmd, _cmd_info, _cmd_text, _i, _info, info_len, cmd_len){
+    for (_i=0;_i<cmd_key;_i++){
+        cmd_len=strlen_without_color(cmd[ _i "text"])
+        _info=cmd[ _i "info"]
+        gsub(/:[ ]*$/, "", _info)
         while(cmd_len > COLUMNS){
             cmd_len=cmd_len-COLUMNS
         }
-        printf("\r\033[1;33;40m%s%s\033[0;40m", key, get_space(COLUMNS-cmd_len))
-        printf("    \033[1;36;40m%s\033[0;40m", cut_info_line(info,4,"\033[1;36;40m"))
+        printf("\033[1;33;40m%s%s\033[0;40m", cmd[ _i "text"], get_space(COLUMNS-cmd_len))
+        printf("    \033[1;36;40m%s\n\033[0;40m", cut_info_line(_info,4,"\033[1;36;40m"))
+        printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
     }
 }
 
@@ -131,7 +132,10 @@ function handle_long_cmd(cmd, info, info_len, cmd_len){
 
 BEGIN {
     printf("\033[0;40m%s", "")
+    out_cmd_key_color=""
+    out_cmd_info_color=""
     title_len=0
+    cmd_key=0
 }
 
 {
@@ -154,14 +158,17 @@ BEGIN {
         if ($0 ~ /^`[^`]+`/) {
             gsub("`","  ",$0)
             cmd_text = substr($0, 1, length($0)-2)
-            cmd[cmd_text] = cmd_info
+            cmd[ cmd_key "text"] = cmd_text
+            cmd[ cmd_key "info"] = cmd_info
             cmd_info=""
             cmd_text=""
+            cmd_key++
         }
     }
 }
 
 END {
     handle_cmd(cmd)
-    printf("\033[0;40m%s%s\033[0m\n", get_space(COLUMNS-1)," ")
+    cmd_key=0
+    printf "\033[0m\n"
 }
