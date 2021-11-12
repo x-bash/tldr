@@ -6,8 +6,10 @@
 
 xrc param/v0
 
+# TODO: To use xrc
 # ______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
 ______X_CMD_TLDR_AWK="./v0.awk"
+# TODO: Use the wcwidth.awk in the ui repo
 ______X_CMD_TLDR_WCWIDTH_AWK="wcwidth.awk"
 
 ______X_CMD_TLDR_LANG="
@@ -39,8 +41,9 @@ zh
 zh_TW
 "
 
+# TODO: To use function in ui
 ___tldr_init_lines_columns(){
-    # TODO: why
+    # TODO: Why just use in bash and zsh?
     # if [ -z "${BASH_VERSION}${ZSH_VERSION}" ]; then
         local IFS
         IFS=" "
@@ -79,6 +82,7 @@ _______tldr_download(){
     local src="${1:?src}"
     local dst="${2:-$1}"
 
+    # TODO: CACHE is use in ___x_cmd_curl ? (Maybe it's not used)
     local CACHE="$_______X_CMD_TLDR_ROOT/$dst"
 
     local url="https://gitee.com/x-cmd/tldr/raw/main/dist/$src"
@@ -94,6 +98,7 @@ ___tldr_current(){
         return 1
     fi
 
+    # TODO: Declare and assign separately to avoid masking return values.shellcheck(SC2155)
     local version="$(cat "$_______X_CMD_TLDR_ROOT/index.yml")"
     version="${version%%
 *}"
@@ -220,6 +225,7 @@ ___tldr_cat(){
             return 1 ;;
         1)
             if [ -t 1 ]; then
+                # TODO: Remove these comments. Because they are not used that we can found it from git history.
                 # if [ "${-#*i}" != "$-" ] && command -v less 2>/dev/null; then
                 #     awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___tldr_getfile "$cand")" | less -R
                 # else
@@ -241,6 +247,7 @@ ___tldr_cat(){
 
 # EndSection
 
+# TODO: Maybe x-cmd can use this advise json. And then we can remove this from x-cmd.
 if [ -n "$BASH_VERSION$ZSH_VERSION" ] && [ "${-#*i}" != "$-" ]; then
     xrc advise
     advise tldr <<A

@@ -1,4 +1,9 @@
 # Section: visualize
+
+# TODO: Please use more space to write your code
+# TODO: The local variables should use '_' as a prefix
+# TODO: Distinguish between parameters and local variables. like 'cut_info_line(info, space_len, color,        _info_len, _info_arr_len, ...){'
+
 function debug(msg){
     print "\033[1;31m" msg "\033[0;0m" > "/dev/stderr"
 }
@@ -22,6 +27,7 @@ function get_space(space_len,_space, _j){
 }
 
 function cut_text_get_arr(_text,i){
+    # TODO: Please use for instead of while
     i=0;
     while(match(_text,/ /)){
         _arr[i]=substr(_text,1,RSTART)
@@ -42,6 +48,7 @@ function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr
     _info_arr_key = cut_text_get_arr(_info)
     if (_info_len >= COLUMNS-_space_len){
         for (i=0; i<_info_arr_key; i++){
+            # TODO: Here the equal sign can be aligned
             _info_arr_len = _info_arr_len + strlen_without_color(_arr[i])
             _info_arr_real_len = _info_arr_real_len + length(_arr[i])
             if (_info_arr_len >= COLUMNS - _space_len){
@@ -68,7 +75,6 @@ function handle_title(title){
 function handle_desc(desc){
     printf("\033[1;33;40m%s\n\033[0;40m", desc)
 }
-
 
 function handle_cmd(cmd, _max_len, _i, _key, _key_len, _cmd_text){
     printf("\033[0;40m%s%s\033[1;40m", get_space(COLUMNS-1), " ")
