@@ -33,26 +33,26 @@ function cut_text_get_arr(_text,i){
     return i
 }
 
-function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line,_info_srr_key){
+function cut_info_line(_info,_space_len,_color,_info_len,_info_arr_len,_info_arr_real_len,_info_line,_info_arr_key){
     _info_line = ""
     _info_arr_len = 0
     _info_arr_real_len=0
-    _info_srr_key=0
+    _info_arr_key = 0
     _info_len = strlen_without_color(_info)
-    _info_srr_key=cut_text_get_arr(_info)
-    if (_info_len > COLUMNS-_space_len){
-        for (i=0;i<_info_srr_key;i++){
-            _info_arr_len=_info_arr_len + strlen_without_color(_arr[i])
-            _info_arr_real_len=_info_arr_real_len+length(_arr[i])
-            if (_info_arr_len > COLUMNS-_space_len){
-                _info_arr_len = _info_arr_len-strlen_without_color(_arr[i])
-                _info_arr_real_len = _info_arr_real_len-length(_arr[i])
+    _info_arr_key = cut_text_get_arr(_info)
+    if (_info_len >= COLUMNS-_space_len){
+        for (i=0; i<_info_arr_key; i++){
+            _info_arr_len = _info_arr_len + strlen_without_color(_arr[i])
+            _info_arr_real_len = _info_arr_real_len + length(_arr[i])
+            if (_info_arr_len >= COLUMNS - _space_len){
+                _info_arr_len = _info_arr_len - strlen_without_color(_arr[i])
+                _info_arr_real_len = _info_arr_real_len - length(_arr[i])
                 break
             }
         }
-        _info_line = _info_line substr(_info,1,_info_arr_real_len-1)  " " get_space(COLUMNS-_space_len-_info_arr_len) ""_color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len),_space_len,_color)
-        _info_arr_len=0
-        _info_arr_real_len=0
+        _info_line = _info_line substr(_info,1,_info_arr_real_len) get_space(COLUMNS - _space_len - _info_arr_len) ""_color get_space(_space_len) cut_info_line(substr(_info,_info_arr_real_len), _space_len,_color)
+        _info_arr_len = 0
+        _info_arr_real_len = 0
     } else {
         _info_line = _info
     }
@@ -118,7 +118,7 @@ function handle_long_cmd(cmd, info, info_len, cmd_len){
         cmd_len=strlen_without_color(key)
         gsub(/:[ ]*$/, "", info)
         info_len=strlen_without_color(info)
-        if(cmd_len > COLUMNS){
+        while(cmd_len > COLUMNS){
             cmd_len=cmd_len-COLUMNS
         }
         printf("\r\033[1;33;40m%s%s\033[0;40m", key, get_space(COLUMNS-cmd_len))
