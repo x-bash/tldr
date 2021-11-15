@@ -4,14 +4,9 @@ function debug(msg){
     print "\033[1;31m" msg "\033[0;0m" > "/dev/stderr"
 }
 
-# If the currently running shell is BusyBox, do not use the wcswidth function.
 function strlen_without_color(text){
     gsub(/\033\[([0-9]+;)*[0-9]+m/, "", text)
-    if (IF_BUSYBOX) {
-        return length(text)
-    } else {
-        return wcswidth(text)
-    }
+    return wcswidth(text)
 }
 
 function get_space(space_len,      _space, _j){
@@ -52,11 +47,11 @@ function cut_info_line(info, space_len, color,
                 break
             }
         }
-        _info_line         = _info_line substr(info,1,_info_arr_real_len) get_space(COLUMNS - space_len - _info_arr_len) color get_space(space_len) cut_info_line(substr(info,_info_arr_real_len), space_len,color)
+        _info_line         = _info_line substr(info,1,_info_arr_real_len) get_space(COLUMNS - space_len - _info_arr_len) color get_space(space_len) cut_info_line(substr(info,_info_arr_real_len+1), space_len,color)
         _info_arr_len      = 0
         _info_arr_real_len = 0
     } else {
-        _info_line = info
+        _info_line = info get_space(COLUMNS-space_len-_info_len)
     }
     return color _info_line
 }
@@ -100,40 +95,39 @@ function handle_cmd(cmd,     _max_len, _i, _key_len, _cmd_text){
 }
 
 function handle_short_cmd(cmd, max_len,
-    _cmd_info, _cmd_text, _i){
+    _cmd_info, _cmd_text, _i, _text){
 
     for (_i=0; _i<cmd_key; _i++) {
         _cmd_info = cmd[ _i "info"]
         _cmd_text = cmd[ _i "text"]
+        gsub(/:[ ]*$/, "", _cmd_info)
 
         if (_i%2 == 0) {
             out_cmd_key_color  = "\033[1;33;40m"
             out_cmd_info_color = "\033[1;32;40m"
-            text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,max_len+4, out_cmd_info_color)
-            gsub(/:[ ]*$/, "", text)
         } else {
             out_cmd_key_color  = "\033[1;37;40m"
             out_cmd_info_color = "\033[1;36;40m"
-            text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,max_len+4, out_cmd_info_color)
         }
-        printf("%s\n\033[0;40m", text)
+        _text=out_cmd_key_color _cmd_text "\033[0;40m" get_space(max_len+4-strlen_without_color(_cmd_text)) out_cmd_info_color cut_info_line(_cmd_info,max_len+4, out_cmd_info_color)
+        printf("%s\n\033[0;40m", _text)
     }
 }
 
 function handle_long_cmd(cmd,
-    _cmd_info, _cmd_text, _i, _info, _cmd_len){
+    _cmd_info, _cmd_text, _i, _cmd_len){
 
     for (_i=0; _i<cmd_key; _i++) {
-        _cmd_len = strlen_without_color(cmd[ _i "text"])
-        _info    = cmd[ _i "info"]
-        gsub(/:[ ]*$/, "", _info)
+        _cmd_len  = strlen_without_color(cmd[ _i "text"])
+        _cmd_info = cmd[ _i "info"]
+        gsub(/:[ ]*$/, "", _cmd_info)
 
         while (_cmd_len > COLUMNS) {
             _cmd_len=_cmd_len-COLUMNS
         }
 
         printf("\033[1;33;40m%s%s\033[0;40m", cmd[ _i "text"], get_space(COLUMNS-_cmd_len))
-        printf("    \033[1;36;40m%s\n\033[0;40m", cut_info_line(_info,4,"\033[1;36;40m"))
+        printf("    \033[1;36;40m%s\n\033[0;40m", cut_info_line(_cmd_info,4,"\033[1;36;40m"))
         printf("\033[0;40m%s%s\033[0;40m", get_space(COLUMNS-1), " ")
     }
 }
