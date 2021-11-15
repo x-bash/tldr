@@ -17,6 +17,7 @@ function get_space(space_len,      _space, _j){
     return _space
 }
 
+# Split the string into an array in order.
 function cut_text_get_arr(text,     _i){
     for (_i=0; match(text,/ /); _i++) {
         _arr[_i] = substr(text,1,RSTART)
@@ -87,7 +88,7 @@ function handle_cmd(cmd,     _max_len, _i, _key_len, _cmd_text){
         }
     }
 
-    if (_max_len > COLUMNS*0.67) {
+    if (_max_len > COLUMNS*0.6) {
         handle_long_cmd(cmd)
     } else {
         handle_short_cmd(cmd,_max_len)
@@ -115,7 +116,7 @@ function handle_short_cmd(cmd, max_len,
 }
 
 function handle_long_cmd(cmd,
-    _cmd_info, _cmd_text, _i, _cmd_len){
+    _cmd_info, _i, _cmd_len){
 
     for (_i=0; _i<cmd_key; _i++) {
         _cmd_len  = strlen_without_color(cmd[ _i "text"])
