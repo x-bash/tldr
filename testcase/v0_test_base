@@ -1,4 +1,9 @@
+#! /bin/bash
+
 move_file(){
+    xrc tldr
+    x log init tldr
+
     mkdir -p ~/.x-cmd/tldr/
     mkdir -p ~/.x-cmd/.tmp/tldr/v1.5/pages/testcase/
     cp v0* ~/.x-cmd/tldr/
