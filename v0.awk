@@ -37,7 +37,9 @@ function cut_info_line(info, space_len, color,
     _info_len     = strlen_without_color(info)
     _info_arr_key = cut_text_get_arr(info)
 
-    if (_info_len >= COLUMNS-space_len) {
+    if (_info_len < COLUMNS-space_len) {
+        _info_line = info get_space(COLUMNS-space_len-_info_len)
+    } else {
         for (i=0; i<_info_arr_key; i++) {
             _info_arr_len      = _info_arr_len + strlen_without_color(_arr[i])
             _info_arr_real_len = _info_arr_real_len + length(_arr[i])
@@ -51,8 +53,6 @@ function cut_info_line(info, space_len, color,
         _info_line         = _info_line substr(info,1,_info_arr_real_len) get_space(COLUMNS - space_len - _info_arr_len) color get_space(space_len) cut_info_line(substr(info,_info_arr_real_len+1), space_len,color)
         _info_arr_len      = 0
         _info_arr_real_len = 0
-    } else {
-        _info_line = info get_space(COLUMNS-space_len-_info_len)
     }
     return color _info_line
 }

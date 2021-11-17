@@ -54,6 +54,7 @@ A
     if [ -z "${PARAM_SUBCMD}" ]; then
         case "$1" in
             :*)     tldr cat "${1#:}" ;;
+            "")     tldr help;;
             *)      tldr cat "$@" ;;
         esac
         return
