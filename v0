@@ -42,20 +42,6 @@ xrc ui/v0
 
 
 tldr(){
-    case "$1" in
-        _x_cmd_advise_json)
-            cat <<A
-{
-    "update": null,
-    "ls": "___tldr_lsname",
-    "lang": "___tldr_lang",
-    "cat": "___tldr_lsname"
-}
-A
-            return 126
-            ;;
-    esac
-
     param:dsl <<A
 subcommands:
     update      "Update"
@@ -241,6 +227,13 @@ ___tldr_cat(){
 # TODO: Maybe x-cmd can use this advise json. And then we can remove this from x-cmd.
 if [ -n "$BASH_VERSION$ZSH_VERSION" ] && [ "${-#*i}" != "$-" ]; then
     xrc advise
-    advise tldr
+    advise tldr - <<A
+{
+    "update": null,
+    "ls": null,
+    "lang": "___tldr_lang",
+    "cat": "___tldr_lsname"
+}
+A
 fi
 
