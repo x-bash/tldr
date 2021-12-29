@@ -45,9 +45,9 @@ tldr(){
     param:dsl <<A
 subcommands:
     update      "Update"
-    ls          "list all possible commands"
+    ls          "List all possible commands"
     lang        "Set Prefered language or show languange candidates"
-    cat         "cat"
+    cat         "Concatenate tldr file to standard output"
 A
     param:run
 
@@ -235,10 +235,16 @@ if [ -n "$BASH_VERSION$ZSH_VERSION" ] && [ "${-#*i}" != "$-" ]; then
     xrc advise
     advise tldr - <<A
 {
-    "update": null,
-    "ls": null,
-    "lang": "___tldr_lang",
-    "cat": "___tldr_lsname"
+    "update": "--- Update",
+    "ls": "--- list all possible commands",
+    "lang": {
+        "#1": "___tldr_lang",
+        "#desc": "Set Prefered language or show languange candidates"
+    },
+    "cat": {
+        "#1": "___tldr_lsname",
+        "#desc": "Concatenate tldr file to standard output"
+    }
 }
 A
 fi
