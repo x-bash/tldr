@@ -232,7 +232,7 @@ ___tldr_cat(){
 # EndSection
 
 # TODO: Maybe x-cmd can use this advise json. And then we can remove this from x-cmd.
-if [ -n "$BASH_VERSION$ZSH_VERSION" ] && [ "${-#*i}" != "$-" ]; then
+if ___x_cmd_is_suitable_advise_env; then
     xrc advise
     advise tldr - <<A
 {
