@@ -1,4 +1,4 @@
-# shellcheck shell=sh disable=SC2039,3043
+# shellcheck shell=sh disable=SC2039,3043 # xrc
 
 # author:       Li Junhao           l@x-cmd.com    edwinjhlee.github.io
 
@@ -249,3 +249,4 @@ if [ -n "$BASH_VERSION$ZSH_VERSION" ] && [ "${-#*i}" != "$-" ]; then
 A
 fi
 
+xrc setmain tldr
