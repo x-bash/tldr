@@ -7,7 +7,7 @@
 
 xrc param/v0
 
-______X_CMD_TLDR_AWK="$(xrc which tldr/v0.awk)"
+______X_CMD_TLDR_AWK="$(xrc which tldr/tldr.awk)"
 ______X_CMD_TLDR_WCWIDTH_AWK="$(xrc which ui/_v0/wcwidth.awk)"
 
 ______X_CMD_TLDR_LANG="
