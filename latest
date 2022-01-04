@@ -250,7 +250,4 @@ if ___x_cmd_is_suitable_advise_env; then
 A
 fi
 
-xrc setmain tldr_file
-if __AUTO_RUN; then
-
-fi
+xrc setmain tldr
