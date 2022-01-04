@@ -250,4 +250,4 @@ if ___x_cmd_is_suitable_advise_env; then
 A
 fi
 
-xrc setmain tldr
+xrc setmain ___x_cmd_tldr
