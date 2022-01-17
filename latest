@@ -237,9 +237,4 @@ A
 }
 # EndSection
 
-if ___x_cmd_is_suitable_advise_env; then
-    xrc advise/latest
-    advise ___x_cmd_tldr "" tldr
-fi
-
 xrc setmain ___x_cmd_tldr
