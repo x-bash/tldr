@@ -39,7 +39,7 @@ zh
 zh_TW
 "
 
-xrc ui/v0
+xrc ui/latest
 
 ___x_cmd_tldr(){
     param:dsl <<A
