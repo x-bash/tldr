@@ -8,7 +8,7 @@
 xrc param/latest
 
 ______X_CMD_TLDR_AWK="$(xrc which tldr/lib/tldr.awk)"
-______X_CMD_TLDR_WCWIDTH_AWK="$(xrc which ui/_v0/wcwidth.awk)"
+______X_CMD_TLDR_WCWIDTH_AWK="$(xrc which awk/lib/wcwidth.awk)"
 
 ______X_CMD_TLDR_LANG="
 en
