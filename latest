@@ -39,7 +39,7 @@ zh
 zh_TW
 "
 
-xrc ui
+xrc ui/lib/select
 
 ___x_cmd_tldr(){
     param:dsl <<A
@@ -225,10 +225,10 @@ A
             fi
                 ;;
         *)
-            local text=
+            local ___X_CMD_UI_SELECT_CURRENT_ITEM=
             local tldr_file
-            eval "$(printf "%s" "$cand" | awk 'BEGIN{ str="ui select ,text \"Found: \""; }{ str = str  " " "\"" $0 "\""; }END{ print str; }')"
-            tldr_file="$(___x_cmd_tldr_getfile "$text")"
+            eval "$(printf "%s" "$cand" | awk 'BEGIN{ str="___x_cmd_ui_select num \"Found: \""; }{ str = str  " " "\"" $0 "\""; }END{ print str " \"---\" \"---\""; }')"
+            tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_SELECT_CURRENT_ITEM")"
             if [ -f "$tldr_file" ];then
                 cat "$tldr_file" | awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")"
                 return 1
