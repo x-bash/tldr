@@ -20,8 +20,11 @@ BEGIN{
     body = ""
 }
 
-function body_add( e ){
-    body = body "\n" e
+function kv(key, value,         _ret){
+    _ret = key
+    _ret = _ret "\n:"
+    _ret = _ret "\n" value
+    return _ret
 }
 
 {
@@ -44,39 +47,21 @@ function body_add( e ){
     } else {
         if ($0 !~ /^`[^`]+`/)  next
 
-        # gsub("`","  ",$0)
-        # print "aaa " $0
-
         body = body ( (body == "") ? "" : "\n," )
         body = body "\n{"
 
-        body = body "\n\"d\""
-        body = body "\n:"
-        body = body "\n" str_quote2( cmd_info )
-
+        body = body "\n" kv( str_quote2("d"), str_quote2( cmd_info ) )
         body = body "\n,"
-
-        body = body "\n\"c\""
-        body = body "\n:"
-        body = body "\n" str_quote2( substr($0, 2, length($0)-2) )
+        body = body "\n" kv( str_quote2("c"), str_quote2( substr($0, 2, length($0)-2) ) )
 
         body = body "\n}"
-
-        cmd_info = ""
     }
 }
 
 END{
     print ","
-    print "\"d\""
-    print ":"
-    print str_quote2( desc )
-
+    print kv( str_quote2("d"), str_quote2( desc ) )
     print ","
-    print "\"b\""
-    print ":"
-    print "["
-    print body
-    print "]"
+    print kv( str_quote2("b"), "[\n" body "\n]")
     print "}"
 }
