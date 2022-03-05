@@ -47,9 +47,8 @@ function kv(key, value,         _ret){
     } else {
         if ($0 !~ /^`[^`]+`/)  next
 
-        body = body ( (body == "") ? "" : "\n," )
-        body = body "\n{"
-
+        body = body ( (body == "") ? "" : "\n,\n" )
+        body = body "{"
 
         body = body "\n" kv( "\"d\"", str_quote2( cmd_info ) )
         body = body "\n,"
