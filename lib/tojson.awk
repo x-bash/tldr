@@ -50,9 +50,10 @@ function kv(key, value,         _ret){
         body = body ( (body == "") ? "" : "\n," )
         body = body "\n{"
 
-        body = body "\n" kv( str_quote2("d"), str_quote2( cmd_info ) )
+
+        body = body "\n" kv( "\"d\"", str_quote2( cmd_info ) )
         body = body "\n,"
-        body = body "\n" kv( str_quote2("c"), str_quote2( substr($0, 2, length($0)-2) ) )
+        body = body "\n" kv( "\"c\"", str_quote2( substr($0, 2, length($0)-2) ) )
 
         body = body "\n}"
     }
@@ -60,8 +61,8 @@ function kv(key, value,         _ret){
 
 END{
     print ","
-    print kv( str_quote2("d"), str_quote2( desc ) )
+    print kv( "\"d\"", str_quote2( desc ) )
     print ","
-    print kv( str_quote2("b"), "[\n" body "\n]")
+    print kv( "\"b\"", "[\n" body "\n]")
     print "}"
 }
