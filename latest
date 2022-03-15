@@ -199,6 +199,13 @@ ___x_cmd_tldr_exact()(
     fi
 )
 
+___x_cmd_tldr_cat_data(){
+    printf "%s\n" "Found:"
+    printf "%s\n" "$cand"
+    printf "%s\n" "---
+---"
+}
+
 ___x_cmd_tldr_cat(){
     param:dsl <<A
 advise:
@@ -208,11 +215,11 @@ options:
 A
     param:run
 
-    cand="$( ___x_cmd_tldr_exact "$@" )"
-    local num
-    num="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
+    local cand="$( ___x_cmd_tldr_exact "$@" )"
+    local number
+    number="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
 
-    case $num in
+    case $number in
         0)  printf "Not found.\n" >&2;
             ___x_cmd_tldr_ls "$@" >&2
             return 1 ;;
@@ -224,10 +231,9 @@ A
             fi
                 ;;
         *)
-            local ___X_CMD_UI_SELECT_CURRENT_ITEM=
             local tldr_file
             local ___X_CMD_UI_GRIDSELECT_CURRENT_ITEM
-            eval "$(printf "%s" "$cand" | awk 'BEGIN{ str="___x_cmd_ui_gridselect num \"Found: \""; }{ str = str  " " "\"" $0 "\""; }END{ print str " \"---\" \"---\""; }')"
+            ___x_cmd_ui_gridselect num ___x_cmd_tldr_cat_data
             tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"
             if [ -f "$tldr_file" ];then
                 cat "$tldr_file" | awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")"
