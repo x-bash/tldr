@@ -37,7 +37,17 @@ A
 
 ___X_CMD_TLDR_TMP="$___X_CMD_ROOT/.tmp/tldr"
 
-___x_cmd_tldr_current(){
+___x_cmd_tldr_current_or_update(){
+    local version
+    version="$(___x_cmd___tldr_current)" && printf "%s\n" "$version" && return 0
+    if ! ___x_cmd_tldr_update; then
+        tldr:warn --return=1 "Fail to show version for tldr pages unexisted."
+        return 1
+    fi
+    ___x_cmd___tldr_current
+}
+
+___x_cmd___tldr_current(){
     local index="$___X_CMD_TLDR_TMP/index.yml"
     if [ ! -f "$index" ]; then
         return 1
@@ -52,16 +62,6 @@ ___x_cmd_tldr_current(){
     return 1
 }
 
-___x_cmd_tldr_current_or_update(){
-    local version
-    version="$(___x_cmd_tldr_current)" && printf "%s\n" "$version" && return 0
-    if ! ___x_cmd_tldr_update; then
-        tldr:warn --return=1 "Fail to show version for tldr pages unexisted."
-        return 1
-    fi
-    ___x_cmd_tldr_current
-}
-
 ___x_cmd_tldr_update()(
     param:void
     if ! ___X_CMD_CURL_UPDATE=1 ___x_cmd___tldr_download index.yml; then
@@ -70,7 +70,7 @@ ___x_cmd_tldr_update()(
     fi
 
     local version
-    version="$(___x_cmd_tldr_current)"
+    version="$(___x_cmd___tldr_current)"
 
     ___x_cmd___tldr_download_pages "$version" pages
 )
@@ -126,18 +126,18 @@ A
     tldr:info "Already setting prefered languange to $______X_CMD_TLDR_LANG_PREFERED"
 }
 
-___x_cmd_tldr_getfile(){
+___x_cmd___tldr_getfile(){
     local cand="${1:?Provide command}"
     local fp
     if [ "$______X_CMD_TLDR_LANG_PREFERED" != en ]; then
-        fp="$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
+        fp="$___X_CMD_TLDR_TMP/$(___x_cmd___tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
         [ -f "$fp" ] && printf "%s" "$fp" && return
         tldr:debug "Try using tldr page in en for regular file unexisted: $fp."
     fi
 
-    fp="$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/$cand"
+    fp="$___X_CMD_TLDR_TMP/$(___x_cmd___tldr_current)/$cand"
     if [ -f "$fp" ]; then
-        printf "%s" "$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/$cand"
+        printf "%s" "$___X_CMD_TLDR_TMP/$(___x_cmd___tldr_current)/$cand"
         return 0
     fi
 
@@ -239,15 +239,15 @@ A
                 awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
             else
                 cat
-            fi <"$(___x_cmd_tldr_getfile "$cand")"
+            fi <"$(___x_cmd___tldr_getfile "$cand")"
                 ;;
         *)
             local tldr_file
             local ___X_CMD_UI_GRIDSELECT_CURRENT_ITEM
             local ___X_CMD_UI_GRIDSELECT_FINAL_COMMAND
-            ___x_cmd_ui_gridselect num ___x_cmd_tldr_cat_data
+            ___x_cmd_ui_gridselect num ___x_cmd___tldr_cat_data
             [ "$___X_CMD_UI_GRIDSELECT_FINAL_COMMAND" = "q" ] && return 0
-            if tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"; then
+            if tldr_file="$(___x_cmd___tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"; then
                 awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" <"$tldr_file"
             else
                 # We might adding a bug system to this kind of situation.
@@ -259,7 +259,7 @@ A
     esac
 }
 
-___x_cmd_tldr_cat_data(){
+___x_cmd___tldr_cat_data(){
     printf "%s\n" "Found:
 $cand
 ---
