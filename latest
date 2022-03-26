@@ -249,6 +249,7 @@ A
             else
                 # We might adding a bug system to this kind of situation.
                 tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $_______X_CMD_TLDR_ROOT/$version/pages/."
+                # Bug self detect: "$( ___x_cmd_tldr_exact "$@" | grep "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"
                 return 1
             fi
             ;;
