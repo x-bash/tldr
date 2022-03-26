@@ -1,6 +1,6 @@
-# shellcheck shell=sh disable=SC2039,3043 # xrc
+# Author:       Li Junhao       @x-cmd.com              # xrc
+# shellcheck    shell=sh        disable=SC2039,3043
 
-# author:       Li Junhao           l@x-cmd.com
 
 # Section: main
 
