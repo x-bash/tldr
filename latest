@@ -216,9 +216,9 @@ ___x_cmd_tldr_exact()(
 
 # Section: cat
 ___x_cmd_tldr_cat_data(){
-    printf "%s\n" "Found:"
-    printf "%s\n" "$cand"
-    printf "%s\n" "---
+    printf "%s\n" "Found:
+$cand
+---
 ---"
 }
 
