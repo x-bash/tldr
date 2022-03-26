@@ -199,7 +199,6 @@ ___x_cmd_tldr_ls()(
 )
 
 ___x_cmd_tldr_exact()(
-    local version
     version="$(___x_cmd_tldr_current_or_update)" || return
 
     if cd "$___X_CMD_TLDR_TMP/$version/"; then
