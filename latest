@@ -36,14 +36,14 @@ A
 
 # Section: current and download
 
-_______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
+___X_CMD_TLDR_TMP="$___X_CMD_ROOT/.tmp/tldr"
 
 ___x_cmd_tldr_current(){
-    if [ ! -f "$_______X_CMD_TLDR_ROOT/index.yml" ]; then
+    if [ ! -f "$___X_CMD_TLDR_TMP/index.yml" ]; then
         return 1
     fi
 
-    awk '{ print($2); exit(0); }'<"$_______X_CMD_TLDR_ROOT/index.yml"
+    awk '{ print($2); exit(0); }'<"$___X_CMD_TLDR_TMP/index.yml"
 }
 
 ___x_cmd_tldr_current_or_update(){
@@ -75,15 +75,15 @@ ___x_cmd_tldr_update()(
 ___x_cmd__tldr_download_pages()(
     local version="${1:?Provide version}"
     local page_lang="${2:?pages}"
-    if [ ! -d "$_______X_CMD_TLDR_ROOT/$version/$page_lang" ]; then
-        mkdir -p "$_______X_CMD_TLDR_ROOT/$version/$page_lang"
+    if [ ! -d "$___X_CMD_TLDR_TMP/$version/$page_lang" ]; then
+        mkdir -p "$___X_CMD_TLDR_TMP/$version/$page_lang"
     fi
 
     if ! ___x_cmd__tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
         tldr:warn "Fail to update $page_lang."
         return 1
     fi
-    if cd "$_______X_CMD_TLDR_ROOT/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
+    if cd "$___X_CMD_TLDR_TMP/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
         tldr:info "Version already UPDATED to $version."
     fi
 )
@@ -92,7 +92,7 @@ ___x_cmd__tldr_download(){
     local src="${1:?Provide source file}"
     local dst="${2:-$1}"
     local expiration="${3:-"1"}"
-    ___x_cmd_curl_gitx x-cmd tldr main "dist/$src" "$_______X_CMD_TLDR_ROOT/$dst" "$expiration" 2>/dev/null
+    ___x_cmd_curl_gitx x-cmd tldr main "dist/$src" "$___X_CMD_TLDR_TMP/$dst" "$expiration" 2>/dev/null
 }
 
 # EndSection
@@ -128,14 +128,14 @@ ___x_cmd_tldr_getfile(){
     local cand="${1:?Provide command}"
     local fp
     if [ "$______X_CMD_TLDR_LANG_PREFERED" != en ]; then
-        fp="$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
+        fp="$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
         [ -f "$fp" ] && printf "%s" "$fp" && return
         tldr:debug "Try using tldr page in en for regular file unexisted: $fp."
     fi
 
-    fp="$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/$cand"
+    fp="$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/$cand"
     if [ -f "$fp" ]; then
-        printf "%s" "$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/$cand"
+        printf "%s" "$___X_CMD_TLDR_TMP/$(___x_cmd_tldr_current)/$cand"
         return 0
     fi
 
@@ -189,7 +189,7 @@ ___x_cmd_tldr_ls()(
     local version
     version="$(___x_cmd_tldr_current_or_update)" || return
 
-    if cd "$_______X_CMD_TLDR_ROOT/$version/pages/"; then
+    if cd "$___X_CMD_TLDR_TMP/$version/pages/"; then
         local cmd="${1}"
         case "$cmd" in
             "")     ls */* ;;
@@ -203,7 +203,7 @@ ___x_cmd_tldr_exact()(
     local version
     version="$(___x_cmd_tldr_current_or_update)" || return
 
-    if cd "$_______X_CMD_TLDR_ROOT/$version/"; then
+    if cd "$___X_CMD_TLDR_TMP/$version/"; then
         local cmd="${1}"
         case "$cmd" in
             "")     ls */*/* ;;
@@ -257,7 +257,7 @@ A
                 awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" <"$tldr_file"
             else
                 # We might adding a bug system to this kind of situation.
-                tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $_______X_CMD_TLDR_ROOT/$version/pages/."
+                tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $___X_CMD_TLDR_TMP/$version/pages/."
                 # Bug self detect: "$( ___x_cmd_tldr_exact "$@" | grep "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"
                 return 1
             fi
