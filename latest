@@ -152,13 +152,25 @@ A
 
 ___x_cmd_tldr_getfile(){
     local cand="${1:?Provide command}"
+    local fp
     if [ "$______X_CMD_TLDR_LANG_PREFERED" != en ]; then
-        local fp
         fp="$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/pages.$______X_CMD_TLDR_LANG_PREFERED/$cand"
         [ -f "$fp" ] && printf "%s" "$fp" && return
+        tldr:debug "Try using tldr page in en for regular file unexisted: $fp."
     fi
 
-    printf "%s" "$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/$cand"
+    fp="$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/$cand"
+    if [ -f "$fp" ]; then
+        printf "%s" "$_______X_CMD_TLDR_ROOT/$(___x_cmd_tldr_current)/$cand"
+        return 0
+    fi
+
+    if [ "$______X_CMD_TLDR_LANG_PREFERED" = en ]; then
+        tldr:info "tldr page unesited in en: $fp"
+    else
+        tldr:info "tldr page unesited after searching page in $______X_CMD_TLDR_LANG_PREFERED and en."
+    fi
+    return 1
 }
 
 ___x_cmd_tldr_lsname(){
@@ -201,9 +213,6 @@ ___x_cmd_tldr_cat_data(){
 ---"
 }
 
-______X_CMD_TLDR_AWK="$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
-______X_CMD_TLDR_WCWIDTH_AWK="$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk"
-
 ___x_cmd_tldr_cat(){
     param:dsl <<A
 advise:
@@ -224,10 +233,10 @@ A
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" < "$(___x_cmd_tldr_getfile "$cand")"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
             else
-                cat "$(___x_cmd_tldr_getfile "$cand")"
-            fi
+                cat
+            fi <"$(___x_cmd_tldr_getfile "$cand")"
                 ;;
         *)
             local tldr_file
@@ -235,12 +244,11 @@ A
             local ___X_CMD_UI_GRIDSELECT_FINAL_COMMAND
             ___x_cmd_ui_gridselect num ___x_cmd_tldr_cat_data
             [ "$___X_CMD_UI_GRIDSELECT_FINAL_COMMAND" = "q" ] && return 0
-            tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"
-            if [ -f "$tldr_file" ]; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" < "$tldr_file"
-                return 1
+            if tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"; then
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" <"$tldr_file"
             else
-                tldr:error "Target tldr page unexisted: $tldr_file"
+                # We might adding a bug system to this kind of situation.
+                tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $_______X_CMD_TLDR_ROOT/$version/pages/."
                 return 1
             fi
             ;;
