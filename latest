@@ -38,13 +38,6 @@ A
 
 _______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
 
-___x_cmd__tldr_download(){
-    local src="${1:?Provide source file}"
-    local dst="${2:-$1}"
-    local expiration="${3:-"1"}"
-    ___x_cmd_curl_gitx x-cmd tldr main "dist/$src" "$_______X_CMD_TLDR_ROOT/$dst" "$expiration" 2>/dev/null
-}
-
 ___x_cmd_tldr_current(){
     if [ ! -f "$_______X_CMD_TLDR_ROOT/index.yml" ]; then
         return 1
@@ -53,21 +46,15 @@ ___x_cmd_tldr_current(){
     awk '{ print($2); exit(0); }'<"$_______X_CMD_TLDR_ROOT/index.yml"
 }
 
-___x_cmd__tldr_download_pages()(
-    local version="${1:?Provide version}"
-    local page_lang="${2:?pages}"
-    if [ ! -d "$_______X_CMD_TLDR_ROOT/$version/$page_lang" ]; then
-        mkdir -p "$_______X_CMD_TLDR_ROOT/$version/$page_lang"
-    fi
-
-    if ! ___x_cmd__tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
-        tldr:warn "Fail to update $page_lang."
+___x_cmd_tldr_current_or_update(){
+    local version
+    version="$(___x_cmd_tldr_current)" && printf "%s\n" "$version" && return 0
+    if ! ___x_cmd_tldr_update; then
+        tldr:warn --return=1 "Fail to show version for tldr pages unexisted."
         return 1
     fi
-    if cd "$_______X_CMD_TLDR_ROOT/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
-        tldr:info "Version already UPDATED to $version."
-    fi
-)
+    ___x_cmd_tldr_current
+}
 
 ___x_cmd_tldr_update()(
     param:void
@@ -85,15 +72,29 @@ ___x_cmd_tldr_update()(
     ___x_cmd__tldr_download_pages "$version" pages
 )
 
-___x_cmd_tldr_current_or_update(){
-    local version
-    version="$(___x_cmd_tldr_current)" && printf "%s\n" "$version" && return 0
-    if ! ___x_cmd_tldr_update; then
-        tldr:warn --return=1 "Fail to show version for tldr pages unexisted."
+___x_cmd__tldr_download_pages()(
+    local version="${1:?Provide version}"
+    local page_lang="${2:?pages}"
+    if [ ! -d "$_______X_CMD_TLDR_ROOT/$version/$page_lang" ]; then
+        mkdir -p "$_______X_CMD_TLDR_ROOT/$version/$page_lang"
+    fi
+
+    if ! ___x_cmd__tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
+        tldr:warn "Fail to update $page_lang."
         return 1
     fi
-    ___x_cmd_tldr_current
+    if cd "$_______X_CMD_TLDR_ROOT/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
+        tldr:info "Version already UPDATED to $version."
+    fi
+)
+
+___x_cmd__tldr_download(){
+    local src="${1:?Provide source file}"
+    local dst="${2:-$1}"
+    local expiration="${3:-"1"}"
+    ___x_cmd_curl_gitx x-cmd tldr main "dist/$src" "$_______X_CMD_TLDR_ROOT/$dst" "$expiration" 2>/dev/null
 }
+
 # EndSection
 
 # Section: lang and getfile
