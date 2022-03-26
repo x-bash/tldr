@@ -215,13 +215,6 @@ ___x_cmd_tldr_exact()(
 # EndSection
 
 # Section: cat
-___x_cmd_tldr_cat_data(){
-    printf "%s\n" "Found:
-$cand
----
----"
-}
-
 ___x_cmd_tldr_cat(){
     param:dsl <<A
 advise:
@@ -263,6 +256,13 @@ A
             fi
             ;;
     esac
+}
+
+___x_cmd_tldr_cat_data(){
+    printf "%s\n" "Found:
+$cand
+---
+---"
 }
 # EndSection
 
