@@ -40,6 +40,8 @@ zh_TW
 
 xrc ui/lib/gridselect
 
+x log init0 tldr
+
 ___x_cmd_tldr(){
     param:dsl <<A
 subcommands:
@@ -81,7 +83,7 @@ ___x_cmd_tldr_current(){
     version="${version%%
 *}"
     version="${version#* }"
-    printf "%s" "$version"
+    printf "%s\n" "$version"
 }
 
 ___x_cmd__tldr_download_pages()(
@@ -92,11 +94,11 @@ ___x_cmd__tldr_download_pages()(
     fi
 
     if ! ___x_cmd__tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
-        printf "%s\n" "Fail to update $page_lang." >&2
+        tldr:warn "Fail to update $page_lang."
         return 1
     fi
     if cd "$_______X_CMD_TLDR_ROOT/$version/$page_lang" && tar xvf "$page_lang.tgz" 2>/dev/null; then
-        printf "Version already UPDATED to %s.\n" "$version" >&2
+        tldr:info "Version already UPDATED to $version."
     fi
 )
 
@@ -118,17 +120,13 @@ ___x_cmd_tldr_update()(
 
 ___x_cmd_tldr_current_or_update(){
     local version
-    if ! version="$(___x_cmd_tldr_current)"; then
-        if ! ___x_cmd_tldr_update; then
-            return 1
-        fi
-        ___x_cmd_tldr_current
-        return
-    else
-        printf "%s" "$version"
+    version="$(___x_cmd_tldr_current)" && printf "%s\n" "$version" && return 0
+    if ! ___x_cmd_tldr_update; then
+        tldr:warn --return=1 "Fail to show version for tldr pages unexisted."
+        return 1
     fi
+    ___x_cmd_tldr_current
 }
-
 
 ______X_CMD_TLDR_LANG_PREFERED="${______X_CMD_TLDR_LANG_PREFERED:-en}"
 ___x_cmd_tldr_lang(){
