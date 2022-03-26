@@ -21,9 +21,9 @@ A
 
     if [ -z "${PARAM_SUBCMD}" ]; then
         case "$1" in
-            :*)     ___x_cmd_tldr cat "${1#:}" ;;
-            "")     ___x_cmd_tldr help;;
-            *)      ___x_cmd_tldr cat "$@" ;;
+            :*)                 ___x_cmd_tldr cat "${1#:}" ;;
+            ""|-h|--help)       ___x_cmd_tldr help;;
+            *)                  ___x_cmd_tldr cat "$@" ;;
         esac
         return
     fi
