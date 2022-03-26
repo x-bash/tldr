@@ -38,11 +38,18 @@ A
 ___X_CMD_TLDR_TMP="$___X_CMD_ROOT/.tmp/tldr"
 
 ___x_cmd_tldr_current(){
-    if [ ! -f "$___X_CMD_TLDR_TMP/index.yml" ]; then
+    local index="$___X_CMD_TLDR_TMP/index.yml"
+    if [ ! -f "$index" ]; then
         return 1
     fi
 
-    awk '{ print($2); exit(0); }'<"$___X_CMD_TLDR_TMP/index.yml"
+    awk '{
+        if ($2 !~ /v[0-9]+\.[0-9]+\.[0-9]+/) { exit(1); }
+        print($2); exit(0)
+    }'<"$index" && return
+
+    tldr:error "Latest version in index.yml is NOT valid: $(awk '{print "$2"; }' <"$index")"
+    return 1
 }
 
 ___x_cmd_tldr_current_or_update(){
@@ -64,9 +71,6 @@ ___x_cmd_tldr_update()(
 
     local version
     version="$(___x_cmd_tldr_current)"
-    version="${version%%
-*}"
-    version="${version#* }"
 
     ___x_cmd__tldr_download_pages "$version" pages
 )
