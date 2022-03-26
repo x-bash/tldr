@@ -115,7 +115,7 @@ ___x_cmd_tldr_update()(
 *}"
     version="${version#* }"
 
-    ___x_cmd__tldr_download_pages "$version" "pages"
+    ___x_cmd__tldr_download_pages "$version" pages
 )
 
 ___x_cmd_tldr_current_or_update(){
