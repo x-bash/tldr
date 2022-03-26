@@ -75,12 +75,7 @@ ___x_cmd_tldr_current(){
         return 1
     fi
 
-    local version
-    version="$(cat "$_______X_CMD_TLDR_ROOT/index.yml")"
-    version="${version%%
-*}"
-    version="${version#* }"
-    printf "%s\n" "$version"
+    awk '{ print($2); exit(0); }'<"$_______X_CMD_TLDR_ROOT/index.yml"
 }
 
 ___x_cmd__tldr_download_pages()(
