@@ -6,35 +6,6 @@
 
 xrc param/latest
 
-______X_CMD_TLDR_LANG="
-en
-bs
-da
-de
-es
-fa
-fr
-hbs
-hi
-id
-it
-ja
-ko
-ml
-nl
-no
-pl
-pt_BR
-pt_PT
-ru
-sv
-ta
-th
-tr
-zh
-zh_TW
-"
-
 xrc ui/lib/gridselect
 
 x log init tldr
@@ -60,6 +31,10 @@ A
 
     "___x_cmd_tldr_$PARAM_SUBCMD" "$@"
 }
+
+# EndSection
+
+# Section: current and download
 
 _______X_CMD_TLDR_ROOT="$___X_CMD_ROOT/.tmp/tldr"
 
@@ -119,6 +94,9 @@ ___x_cmd_tldr_current_or_update(){
     fi
     ___x_cmd_tldr_current
 }
+# EndSection
+
+# Section: lang and getfile
 
 ______X_CMD_TLDR_LANG_PREFERED="${______X_CMD_TLDR_LANG_PREFERED:-en}"
 ___x_cmd_tldr_lang(){
@@ -168,6 +146,39 @@ ___x_cmd_tldr_getfile(){
     return 1
 }
 
+
+______X_CMD_TLDR_LANG="
+en
+bs
+da
+de
+es
+fa
+fr
+hbs
+hi
+id
+it
+ja
+ko
+ml
+nl
+no
+pl
+pt_BR
+pt_PT
+ru
+sv
+ta
+th
+tr
+zh
+zh_TW
+"
+
+# EndSection
+
+# Section: locate document: lsname, ls, exact
 ___x_cmd_tldr_lsname(){
     ___x_cmd_tldr_ls | awk -v FS=/ '{ print substr($2, 1, length($2)-3); }' | sort | uniq
 }
@@ -200,7 +211,9 @@ ___x_cmd_tldr_exact()(
         esac
     fi
 )
+# EndSection
 
+# Section: cat
 ___x_cmd_tldr_cat_data(){
     printf "%s\n" "Found:"
     printf "%s\n" "$cand"
