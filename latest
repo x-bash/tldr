@@ -144,7 +144,7 @@ A
     fi
 
     local lang="${1:?Provide langauge}"
-    if [ "$lang" != "en" ]; then
+    if [ "$lang" != en ]; then
         local version
         version="$(___x_cmd_tldr_current_or_update)" || return
         ___x_cmd__tldr_download_pages "$version" "pages.$lang" || return
