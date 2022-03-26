@@ -98,7 +98,6 @@ ___x_cmd__tldr_download(){
 # EndSection
 
 # Section: lang and getfile
-
 ______X_CMD_TLDR_LANG_PREFERED="${______X_CMD_TLDR_LANG_PREFERED:-en}"
 ___x_cmd_tldr_lang(){
     param:dsl <<A
