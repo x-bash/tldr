@@ -1,7 +1,6 @@
 # Author:       Li Junhao       @x-cmd.com              # xrc
 # shellcheck    shell=sh        disable=SC2039,3043
 
-
 # Section: main
 
 xrc param/latest
