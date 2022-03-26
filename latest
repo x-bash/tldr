@@ -6,9 +6,6 @@
 
 xrc param/latest
 
-______X_CMD_TLDR_AWK="$(xrc which tldr/lib/tldr.awk)"
-______X_CMD_TLDR_WCWIDTH_AWK="$(xrc which awk/lib/wcwidth.awk)"
-
 ______X_CMD_TLDR_LANG="
 en
 bs
@@ -105,7 +102,7 @@ ___x_cmd__tldr_download_pages()(
 ___x_cmd_tldr_update()(
     param:void
     if ! ___X_CMD_CURL_UPDATE=1 ___x_cmd__tldr_download index.yml; then
-        printf "%s\n" "Fail to update index.yml." >&2
+        tldr:warn "Fail to update index.yml."
         return 1
     fi
 
@@ -150,7 +147,7 @@ A
         ___x_cmd__tldr_download_pages "$version" "pages.$lang" || return
     fi
     ______X_CMD_TLDR_LANG_PREFERED="$lang"
-    printf "Already setting prefered languange to %s\n" "$______X_CMD_TLDR_LANG_PREFERED" >&2
+    tldr:info "Already setting prefered languange to $______X_CMD_TLDR_LANG_PREFERED"
 }
 
 ___x_cmd_tldr_getfile(){
@@ -204,6 +201,9 @@ ___x_cmd_tldr_cat_data(){
 ---"
 }
 
+______X_CMD_TLDR_AWK="$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
+______X_CMD_TLDR_WCWIDTH_AWK="$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk"
+
 ___x_cmd_tldr_cat(){
     param:dsl <<A
 advise:
@@ -213,17 +213,18 @@ options:
 A
     param:run
 
-    local cand="$( ___x_cmd_tldr_exact "$@" )"
+    local cand=
+    cand="$( ___x_cmd_tldr_exact "$@" )"
     local number
     number="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
 
     case $number in
         0)  printf "Not found.\n" >&2;
-            ___x_cmd_tldr_ls "$@" >&2
+            ___x_cmd_tldr_ls "$@" >&2   # TODO: ask whether to open app for tldr pages.
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")" < "$(___x_cmd_tldr_getfile "$cand")"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" < "$(___x_cmd_tldr_getfile "$cand")"
             else
                 cat "$(___x_cmd_tldr_getfile "$cand")"
             fi
@@ -235,8 +236,11 @@ A
             ___x_cmd_ui_gridselect num ___x_cmd_tldr_cat_data
             [ "$___X_CMD_UI_GRIDSELECT_FINAL_COMMAND" = "q" ] && return 0
             tldr_file="$(___x_cmd_tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"
-            if [ -f "$tldr_file" ];then
-                cat "$tldr_file" | awk -v COLUMNS="$COLUMNS" "$(xrc cat $______X_CMD_TLDR_WCWIDTH_AWK)$(cat "$______X_CMD_TLDR_AWK")"
+            if [ -f "$tldr_file" ]; then
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" < "$tldr_file"
+                return 1
+            else
+                tldr:error "Target tldr page unexisted: $tldr_file"
                 return 1
             fi
             ;;
