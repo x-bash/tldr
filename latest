@@ -64,7 +64,7 @@ ___x_cmd_tldr_current_or_update(){
 
 ___x_cmd_tldr_update()(
     param:void
-    if ! ___X_CMD_CURL_UPDATE=1 ___x_cmd__tldr_download index.yml; then
+    if ! ___X_CMD_CURL_UPDATE=1 ___x_cmd___tldr_download index.yml; then
         tldr:warn "Fail to update index.yml."
         return 1
     fi
@@ -72,17 +72,17 @@ ___x_cmd_tldr_update()(
     local version
     version="$(___x_cmd_tldr_current)"
 
-    ___x_cmd__tldr_download_pages "$version" pages
+    ___x_cmd___tldr_download_pages "$version" pages
 )
 
-___x_cmd__tldr_download_pages()(
+___x_cmd___tldr_download_pages()(
     local version="${1:?Provide version}"
     local page_lang="${2:?pages}"
     if [ ! -d "$___X_CMD_TLDR_TMP/$version/$page_lang" ]; then
         mkdir -p "$___X_CMD_TLDR_TMP/$version/$page_lang"
     fi
 
-    if ! ___x_cmd__tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
+    if ! ___x_cmd___tldr_download "$version/$page_lang.tgz" "$version/$page_lang/$page_lang.tgz" "0"; then
         tldr:warn "Fail to update $page_lang."
         return 1
     fi
@@ -91,7 +91,7 @@ ___x_cmd__tldr_download_pages()(
     fi
 )
 
-___x_cmd__tldr_download(){
+___x_cmd___tldr_download(){
     local src="${1:?Provide source file}"
     local dst="${2:-$1}"
     local expiration="${3:-"1"}"
@@ -120,7 +120,7 @@ A
     if [ "$lang" != en ]; then
         local version
         version="$(___x_cmd_tldr_current_or_update)" || return
-        ___x_cmd__tldr_download_pages "$version" "pages.$lang" || return
+        ___x_cmd___tldr_download_pages "$version" "pages.$lang" || return
     fi
     ______X_CMD_TLDR_LANG_PREFERED="$lang"
     tldr:info "Already setting prefered languange to $______X_CMD_TLDR_LANG_PREFERED"
