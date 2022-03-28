@@ -27,7 +27,7 @@ A
         esac
         return
     fi
-    tldr:debug "___X_CMD_ROOT_MOD: $___X_CMD_ROOT_MOD; ___X_CMD_ROOT_MOD_MOD: $___X_CMD_ROOT_MOD_MOD"
+    tldr:debug "___X_CMD_ROOT: $___X_CMD_ROOT; ___X_CMD_ROOT_MOD: $___X_CMD_ROOT_MOD"
     "___x_cmd_tldr_$PARAM_SUBCMD" "$@"
 }
 
@@ -237,7 +237,7 @@ A
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT/tldr/lib/tldr.awk"
             else
                 cat
             fi <"$(___x_cmd___tldr_getfile "$cand")"
@@ -249,7 +249,7 @@ A
             ___x_cmd_ui_gridselect num ___x_cmd___tldr_cat_data
             [ "$___X_CMD_UI_GRIDSELECT_FINAL_COMMAND" = "q" ] && return 0
             if tldr_file="$(___x_cmd___tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" <"$tldr_file"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT/tldr/lib/tldr.awk" <"$tldr_file"
             else
                 # We might adding a bug system to this kind of situation.
                 tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $___X_CMD_TLDR_TMP/$version/pages/."
