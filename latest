@@ -35,7 +35,7 @@ A
 
 # Section: current and download
 
-___X_CMD_TLDR_TMP="$___X_CMD_ROOT/.tmp/tldr"
+___X_CMD_TLDR_TMP="$___X_CMD_ROOT_MOD/.tmp/tldr"
 
 ___x_cmd_tldr_current_or_update(){
     local version
@@ -232,12 +232,12 @@ A
     number="$(printf "%s" "$cand" | awk 'END{ print NR; }')"
 
     case $number in
-        0)  printf "Not found.\n" >&2;
+        0)  tldr:error "Not found.";
             ___x_cmd_tldr_ls "$@" >&2   # TODO: ask whether to open app for tldr pages.
             return 1 ;;
         1)
             if [ -t 1 ]; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT/tldr/lib/tldr.awk"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk"
             else
                 cat
             fi <"$(___x_cmd___tldr_getfile "$cand")"
@@ -246,10 +246,13 @@ A
             local tldr_file
             local ___X_CMD_UI_GRIDSELECT_CURRENT_ITEM
             local ___X_CMD_UI_GRIDSELECT_FINAL_COMMAND
+
             ___x_cmd_ui_gridselect num ___x_cmd___tldr_cat_data
+
             [ "$___X_CMD_UI_GRIDSELECT_FINAL_COMMAND" = "q" ] && return 0
+
             if tldr_file="$(___x_cmd___tldr_getfile "$___X_CMD_UI_GRIDSELECT_CURRENT_ITEM")"; then
-                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT/tldr/lib/tldr.awk" <"$tldr_file"
+                awk -v COLUMNS="$COLUMNS" -f "$___X_CMD_ROOT_MOD/awk/lib/wcwidth.awk" -f "$___X_CMD_ROOT_MOD/tldr/lib/tldr.awk" <"$tldr_file"
             else
                 # We might adding a bug system to this kind of situation.
                 tldr:error "Select a candidate which doesn't exist in local disk due to bug or deletion on folder during the execution of this function: $___X_CMD_TLDR_TMP/$version/pages/."
